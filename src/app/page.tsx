@@ -1,101 +1,254 @@
-import Image from "next/image";
+import { CityMeta } from '@/types/city';
+import { tw, withBunny } from '@/utils';
+import { getAllCitiesMeta, getFeaturedCities } from '@/utils/cities';
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default function Home() {
+function CityCard({ city }: { city: CityMeta }) {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded-sm font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <Link
+      href={`/cities/${city.slug}`}
+      className="group relative overflow-hidden rounded-xl bg-gray-100 transition-all hover:ring-2 hover:ring-blue-500 hover:ring-offset-2"
+    >
+      {city.frontmatter.screenshots[0] && (
+        <div className="aspect-[16/9] overflow-hidden">
+          <Image
+            src={city.frontmatter.screenshots[0]}
+            alt={city.frontmatter.title}
+            width={600}
+            height={338}
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      )}
+      <div className="p-4">
+        <h3 className="mb-2 text-xl font-semibold">{city.frontmatter.title}</h3>
+        <div className="mb-2 flex flex-wrap gap-2">
+          {city.frontmatter.tags.slice(0, 3).map(tag => (
+            <span
+              key={tag}
+              className="rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-700"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <div className="flex items-center justify-between text-sm text-gray-600">
+          <span>{city.frontmatter.region}</span>
+          <span>{city.frontmatter.season}</span>
+        </div>
+      </div>
+    </Link>
   );
 }
+
+function CitiesGrid({ cities, title }: { cities: CityMeta[]; title: string }) {
+  if (cities.length === 0) return null;
+
+  return (
+    <section className="mb-12">
+      <h2 className="mb-6 text-2xl font-bold">{title}</h2>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {cities.map(city => (
+          <CityCard key={city.slug} city={city} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const HeaderSection = () => {
+  const Card = ({
+    href,
+    src,
+    title,
+    className,
+  }: {
+    href: string;
+    src: string;
+    title: string;
+    className?: string;
+  }) => (
+    <Link
+      href={href}
+      className={tw(
+        'group/card relative flex items-center justify-center overflow-hidden rounded-2xl bg-gray-950 transition-all duration-300 group-hover/grid:opacity-70 hover:z-10 hover:scale-105 hover:opacity-100 hover:shadow-2xl',
+        className
+      )}
+    >
+      <Image
+        src={withBunny(src)}
+        alt={title}
+        width={1280}
+        height={720}
+        className="h-32 w-full object-cover opacity-40 sm:h-full"
+      />
+      <p className="group-hover/card:bg-foreground-inverted group-hover/card:text-background-inverted text-foreground-inverted absolute z-10 flex items-center justify-center rounded-full px-4 py-2 text-center text-xl font-semibold transition">
+        {title}
+      </p>
+    </Link>
+  );
+
+  return (
+    <header className="flex flex-col items-center gap-24 py-24">
+      <h1 className="text-center">How do you city?</h1>
+      <div className="group/grid grid grid-cols-2 gap-4 sm:hidden">
+        <div className="col-span-2 flex flex-col gap-4">
+          <Card
+            href="/cities/european"
+            src="/ui/header-section/europe.webp"
+            title="North American"
+          />
+          <Card
+            href="/cities/european"
+            src="/ui/header-section/europe.webp"
+            title="European"
+          />
+          <Card
+            href="/cities/asian"
+            src="/ui/header-section/europe.webp"
+            title="Asian"
+          />
+        </div>
+        <Card
+          href="/cities/interchanges"
+          src="/ui/header-section/europe.webp"
+          title="Interchanges"
+        />
+        <Card
+          href="/cities/downtown"
+          src="/ui/header-section/europe.webp"
+          title="Downtown"
+        />
+        <Card
+          href="/cities/suburb"
+          src="/ui/header-section/europe.webp"
+          title="Suburb"
+        />
+        <Card
+          href="/cities/transit-hub"
+          src="/ui/header-section/europe.webp"
+          title="Transit hub"
+        />
+      </div>
+      <div className="group/grid hidden w-full flex-col gap-4 sm:flex lg:hidden">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <Card
+            href="/cities/european"
+            src="/ui/header-section/europe.webp"
+            title="North American"
+          />
+          <Card
+            href="/cities/european"
+            src="/ui/header-section/europe.webp"
+            title="European"
+          />
+          <Card
+            href="/cities/asian"
+            src="/ui/header-section/europe.webp"
+            title="Asian"
+          />
+        </div>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <Card
+            href="/cities/interchanges"
+            src="/ui/header-section/europe.webp"
+            title="Interchanges"
+          />
+          <Card
+            href="/cities/downtown"
+            src="/ui/header-section/europe.webp"
+            title="Downtown"
+          />
+          <Card
+            href="/cities/suburb"
+            src="/ui/header-section/europe.webp"
+            title="Suburb"
+          />
+          <Card
+            href="/cities/transit-hub"
+            src="/ui/header-section/europe.webp"
+            title="Transit hub"
+          />
+        </div>
+      </div>
+      <div className="group/grid hidden h-96 w-full grid-flow-col grid-cols-5 grid-rows-2 gap-4 lg:grid">
+        <Card
+          href="/cities/european"
+          src="/ui/header-section/europe.webp"
+          title="North American"
+          className="row-span-2"
+        />
+        <Card
+          href="/cities/interchanges"
+          src="/ui/header-section/europe.webp"
+          title="Interchanges"
+        />
+        <Card
+          href="/cities/downtown"
+          src="/ui/header-section/europe.webp"
+          title="Downtown"
+        />
+        <Card
+          href="/cities/european"
+          src="/ui/header-section/europe.webp"
+          title="European"
+          className="row-span-2"
+        />
+        <Card
+          href="/cities/suburb"
+          src="/ui/header-section/europe.webp"
+          title="Suburb"
+        />
+        <Card
+          href="/cities/transit-hub"
+          src="/ui/header-section/europe.webp"
+          title="Transit hub"
+        />
+        <Card
+          href="/cities/asian"
+          src="/ui/header-section/europe.webp"
+          title="Asian"
+          className="row-span-2"
+        />
+      </div>
+    </header>
+  );
+};
+
+const Homepage = async () => {
+  const featured = await getFeaturedCities();
+  const allCities = await getAllCitiesMeta();
+
+  // Group cities by region
+  const regions = [...new Set(allCities.map(city => city.frontmatter.region))];
+  const citiesByRegion = regions.reduce<Record<string, CityMeta[]>>(
+    (acc, region) => {
+      acc[region] = allCities.filter(
+        city => city.frontmatter.region === region && !city.frontmatter.featured
+      );
+      return acc;
+    },
+    {}
+  );
+
+  return (
+    <div className="max-w-8xl mx-auto p-6">
+      <HeaderSection />
+
+      {/* {featured.length > 0 && (
+        <CitiesGrid cities={featured} title="Featured Cities" />
+      )}
+
+      {regions.map(region => (
+        <CitiesGrid
+          key={region}
+          cities={citiesByRegion[region]}
+          title={`${region} Cities`}
+        />
+      ))} */}
+    </div>
+  );
+};
+
+export default Homepage;

@@ -3,16 +3,43 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-background-inverted: var(--background-inverted);
+  --color-foreground-inverted: var(--foreground-inverted);
+
+  --font-poppins: var(--font-poppins);
+  --font-inter: var(--font-inter);
+
+  --container-8xl: 1536px; /* 96rem = 1536px */
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+@layer base {
+  :root {
+    --background: #ffffff;
+    --background-inverted: #171717;
+    --foreground: #171717;
+    --foreground-inverted: #ffffff;
+  }
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --background-inverted: #ededed;
+      --foreground: #ededed;
+      --foreground-inverted: #0a0a0a;
+    }
+  }
+
+  h1 {
+    @apply font-poppins;
+    @apply text-5xl;
+  }
+
+  body {
+    @apply text-foreground bg-background;
+  }
+}
+
+/* Base border color compatibility */
 @layer base {
   *,
   ::after,
@@ -21,22 +48,4 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
-}
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
