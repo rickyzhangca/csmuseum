@@ -1,5 +1,5 @@
-import type { CityMeta } from '@/lib/types/city';
-import { getAllCitiesMeta } from '@/lib/utils/cities';
+import { CityMeta } from '@/types/city';
+import { getAllCitiesMeta, withBunny } from '@/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -12,7 +12,7 @@ function CityListItem({ city }: { city: CityMeta }) {
       {city.frontmatter.screenshots[0] && (
         <div className="relative aspect-[16/9] w-48 shrink-0 overflow-hidden rounded-lg">
           <Image
-            src={city.frontmatter.screenshots[0]}
+            src={withBunny(city.frontmatter.screenshots[0])}
             alt={city.frontmatter.title}
             fill
             className="object-cover transition-transform group-hover:scale-105"
@@ -21,8 +21,9 @@ function CityListItem({ city }: { city: CityMeta }) {
       )}
       <div className="flex flex-col">
         <h2 className="text-xl font-semibold group-hover:text-blue-600">
-          {city.frontmatter.title}
+          {city.frontmatter.name}
         </h2>
+        <p className="text-sm text-gray-500">{city.frontmatter.headline}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {city.frontmatter.tags.map(tag => (
             <span

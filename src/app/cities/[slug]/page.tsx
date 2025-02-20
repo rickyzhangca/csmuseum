@@ -1,3 +1,4 @@
+import { withBunny } from '@/utils';
 import { getCityBySlug, getCitySlugs } from '@/utils/cities';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -22,7 +23,8 @@ export default async function CityPage({ params }: PageProps) {
     return (
       <article className="mx-auto max-w-4xl px-4 py-8">
         <header className="mb-8">
-          <h1 className="mb-4 text-5xl font-bold">{frontmatter.title}</h1>
+          <h1 className="mb-4 text-5xl font-bold">{frontmatter.name}</h1>
+          <p className="mb-4 text-xl text-gray-600">{frontmatter.headline}</p>
           <div className="mb-4 flex flex-wrap gap-2">
             {frontmatter.tags.map((tag: string) => (
               <span
@@ -52,8 +54,8 @@ export default async function CityPage({ params }: PageProps) {
         {frontmatter.screenshots.length > 0 && (
           <div className="mb-8">
             <Image
-              src={frontmatter.screenshots[0]}
-              alt={`Screenshot of ${frontmatter.title}`}
+              src={withBunny(frontmatter.screenshots[0])}
+              alt={`Screenshot of ${frontmatter.name}`}
               width={1200}
               height={630}
               className="h-[400px] w-full rounded-lg object-cover"

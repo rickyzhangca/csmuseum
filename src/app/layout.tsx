@@ -1,4 +1,5 @@
 import { Logo } from '@/components';
+import { getAllCitiesMeta } from '@/utils';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import Link from 'next/link';
@@ -39,29 +40,28 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className={`${inter.variable} ${poppins.variable} min-h-full`}>
         <nav>
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 justify-between">
+          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex h-16 items-center justify-between">
               <Link
                 href="/"
                 className="flex items-center gap-2 text-lg font-semibold hover:text-blue-600"
               >
                 <Logo />
               </Link>
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/cities"
-                  className="text-sm font-medium text-gray-700 hover:text-blue-600"
-                >
-                  All Cities
-                </Link>
-              </div>
+              <p className="text-foreground/50">
+                {(async () => {
+                  const cities = await getAllCitiesMeta();
+                  return `CSMuseum has collected ${cities.length} cities`;
+                })()}
+              </p>
             </div>
           </div>
         </nav>
         <main>{children}</main>
-        <footer className="border-t py-8">
-          <div className="mx-auto max-w-7xl px-4 text-center text-sm text-gray-400">
-            CSMuseum is proudly ad-free, independent, and open-source
+        <footer className="border-t bg-gray-100 py-16">
+          <div className="max-w-8xl mx-auto px-4 text-center text-sm text-gray-400">
+            CSMuseum is proudly non-profit, ad-free, independent, and
+            open-source. All contents belong to their original creators.
           </div>
         </footer>
       </body>

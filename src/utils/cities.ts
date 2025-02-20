@@ -1,15 +1,17 @@
+'use server';
+
 import { City, CityFrontmatterSchema, CityMeta } from '@/types/city';
-import fs from 'fs';
 import matter from 'gray-matter';
-import path from 'path';
+import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
 
 const CITIES_PATH = path.join(process.cwd(), 'content/cities');
 
 /**
  * Get all city slugs
  */
-export function getCitySlugs(): string[] {
-  const files = fs.readdirSync(CITIES_PATH);
+export async function getCitySlugs(): Promise<string[]> {
+  const files = readdirSync(CITIES_PATH);
   return files
     .filter(file => file.endsWith('.mdx'))
     .map(file => file.replace(/\.mdx$/, ''));
@@ -18,12 +20,12 @@ export function getCitySlugs(): string[] {
 /**
  * Get a single city by slug
  */
-export function getCityBySlug(slug: string): City {
+export async function getCityBySlug(slug: string): Promise<City> {
   const filePath = path.join(CITIES_PATH, `${slug}.mdx`);
-  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const fileContents = readFileSync(filePath, 'utf8');
   const { data, content } = matter(fileContents);
 
-  // Validate frontmatterw
+  // Validate frontmatter
   const frontmatter = CityFrontmatterSchema.parse(data);
 
   return {
@@ -36,18 +38,20 @@ export function getCityBySlug(slug: string): City {
 /**
  * Get all cities metadata (without content)
  */
-export function getAllCitiesMeta(): CityMeta[] {
-  const slugs = getCitySlugs();
-  const cities = slugs.map(slug => {
-    const city = getCityBySlug(slug);
-    const { content, ...meta } = city;
-    return meta;
-  });
+export async function getAllCitiesMeta(): Promise<CityMeta[]> {
+  const slugs = await getCitySlugs();
+  const cities = await Promise.all(
+    slugs.map(async slug => {
+      const city = await getCityBySlug(slug);
+      const { content, ...meta } = city;
+      return meta;
+    })
+  );
 
-  // Sort by featured first, then alphabetically by title
+  // Sort by featured first, then alphabetically by name
   return cities.sort((a, b) => {
     if (a.frontmatter.featured === b.frontmatter.featured) {
-      return a.frontmatter.title.localeCompare(b.frontmatter.title);
+      return a.frontmatter.name.localeCompare(b.frontmatter.name);
     }
     return a.frontmatter.featured ? -1 : 1;
   });
@@ -56,8 +60,9 @@ export function getAllCitiesMeta(): CityMeta[] {
 /**
  * Get cities filtered by region
  */
-export function getCitiesByRegion(region: string): CityMeta[] {
-  return getAllCitiesMeta().filter(
+export async function getCitiesByRegion(region: string): Promise<CityMeta[]> {
+  const cities = await getAllCitiesMeta();
+  return cities.filter(
     city => city.frontmatter.region.toLowerCase() === region.toLowerCase()
   );
 }
@@ -65,8 +70,9 @@ export function getCitiesByRegion(region: string): CityMeta[] {
 /**
  * Get cities filtered by season
  */
-export function getCitiesBySeason(season: string): CityMeta[] {
-  return getAllCitiesMeta().filter(
+export async function getCitiesBySeason(season: string): Promise<CityMeta[]> {
+  const cities = await getAllCitiesMeta();
+  return cities.filter(
     city => city.frontmatter.season.toLowerCase() === season.toLowerCase()
   );
 }
@@ -74,8 +80,9 @@ export function getCitiesBySeason(season: string): CityMeta[] {
 /**
  * Get cities filtered by tag
  */
-export function getCitiesByTag(tag: string): CityMeta[] {
-  return getAllCitiesMeta().filter(city =>
+export async function getCitiesByTag(tag: string): Promise<CityMeta[]> {
+  const cities = await getAllCitiesMeta();
+  return cities.filter(city =>
     city.frontmatter.tags.some(
       (t: string) => t.toLowerCase() === tag.toLowerCase()
     )
@@ -85,6 +92,7 @@ export function getCitiesByTag(tag: string): CityMeta[] {
 /**
  * Get featured cities
  */
-export function getFeaturedCities(): CityMeta[] {
-  return getAllCitiesMeta().filter(city => city.frontmatter.featured);
+export async function getFeaturedCities(): Promise<CityMeta[]> {
+  const cities = await getAllCitiesMeta();
+  return cities.filter(city => city.frontmatter.featured);
 }
