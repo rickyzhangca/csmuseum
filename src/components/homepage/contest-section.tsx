@@ -82,7 +82,9 @@ export const ContestSection = async () => {
               ))}
             </div>
           </HorizontalScrollable>
-          <LinkButton href="/cities">View all winning cities</LinkButton>
+          <LinkButton href="/cities?filter=winning" target="_self">
+            View all winning cities
+          </LinkButton>
         </Section.Content>
       </Section>
       <div className="relative h-px w-full">

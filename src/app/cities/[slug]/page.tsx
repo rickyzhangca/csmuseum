@@ -35,7 +35,6 @@ export default async function CityPage({ params }: Props) {
     notFound();
   }
 
-  // Get 3 random cities excluding current one
   const otherCities = cities.filter(c => c.slug !== city.slug);
   const randomCities = [...otherCities]
     .sort(() => Math.random() - 0.5)
