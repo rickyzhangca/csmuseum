@@ -16,7 +16,7 @@ export const desertTech: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Silicon Sands cityscape',
       season: 'summer',
-      tags: ['tech', 'desert', 'traditional', 'smart-city'],
+      features: ['tech', 'desert', 'traditional', 'smart-city'],
     },
   ],
   draft: true,

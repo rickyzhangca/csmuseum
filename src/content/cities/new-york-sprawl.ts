@@ -16,7 +16,7 @@ export const newYorkSprawl: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'New Manhattan grid system aerial view',
       season: 'summer',
-      tags: ['urban', 'grid', 'skyscrapers', 'dense', 'american'],
+      features: ['urban', 'grid', 'skyscrapers', 'dense', 'american'],
     },
   ],
   dateAdded: '2024-02-19',

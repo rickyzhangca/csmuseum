@@ -16,7 +16,7 @@ export const mountainSpring: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Alpine Bloom spring panorama',
       season: 'spring',
-      tags: ['mountain', 'spring', 'gardens', 'modern'],
+      features: ['mountain', 'spring', 'gardens', 'modern'],
     },
   ],
   dateAdded: '2024-02-19',

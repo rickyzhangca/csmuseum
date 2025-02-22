@@ -16,7 +16,7 @@ export const industrialGrim: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Neo Industrial district overview',
       season: 'fall',
-      tags: ['industrial', 'modern', 'sustainable', 'planned'],
+      features: ['industrial', 'modern', 'sustainable', 'planned'],
     },
   ],
   dateAdded: '2024-02-19',

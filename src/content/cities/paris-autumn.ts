@@ -16,7 +16,7 @@ export const parisAutumn: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Autumn in Paris cityscape',
       season: 'fall',
-      tags: ['european', 'historic', 'dense', 'autumn-colors'],
+      features: ['european', 'historic', 'dense', 'autumn-colors'],
     },
   ],
   contest: {

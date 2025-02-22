@@ -16,7 +16,7 @@ export const desertOasis: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Sahara Springs aerial view',
       season: 'summer',
-      tags: ['desert', 'sustainable', 'oasis', 'modern'],
+      features: ['desert', 'sustainable', 'oasis', 'modern'],
     },
   ],
   dateAdded: '2024-02-19',

@@ -16,7 +16,7 @@ export const tokyoCyberpunk: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Neo Tokyo cityscape at night',
       season: 'winter',
-      tags: ['cyberpunk', 'futuristic', 'neon', 'dense', 'unique-theme'],
+      features: ['cyberpunk', 'futuristic', 'neon', 'dense', 'unique-theme'],
     },
   ],
   contest: {

@@ -22,7 +22,7 @@ export type Screenshot = {
   width?: number;
   height?: number;
   season?: Season;
-  tags: string[];
+  features: string[];
 };
 
 export type City = {

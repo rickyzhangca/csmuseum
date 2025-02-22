@@ -17,14 +17,14 @@ export const getCitiesByRegion = (region: City['region']) =>
 
 export const getCitiesByTag = (tag: string) =>
   cities.filter(city =>
-    city.screenshots.some(screenshot => screenshot.tags.includes(tag))
+    city.screenshots.some(screenshot => screenshot.features.includes(tag))
   );
 
 export const getAllTags = () =>
   Array.from(
     new Set(
       cities.flatMap(city =>
-        city.screenshots.flatMap(screenshot => screenshot.tags)
+        city.screenshots.flatMap(screenshot => screenshot.features)
       )
     )
   );

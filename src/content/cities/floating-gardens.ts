@@ -16,7 +16,7 @@ export const floatingGardens: City = {
       url: '/ui/header-section/europe.webp',
       alt: 'Aqua Botanica floating districts',
       season: 'summer',
-      tags: ['floating', 'sustainable', 'experimental', 'agriculture'],
+      features: ['floating', 'sustainable', 'experimental', 'agriculture'],
     },
   ],
   draft: true,
