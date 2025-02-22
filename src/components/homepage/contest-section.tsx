@@ -1,14 +1,14 @@
-import { City } from '@/types';
+import { City } from '@/types/city';
 import { getContestWinners, withBunny } from '@/utils';
 import { MedalIcon } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { CityCard } from '../city-card';
 import { Diamond } from '../diamond';
 import { HorizontalScrollable } from '../horizontal-scrollable';
 import { LinkButton } from '../link-button';
 import { Section } from '../section';
 
-const Card = ({ city }: { city: City }) => (
+const ContestCityCard = ({ city }: { city: City }) => (
   <div
     key={city.slug}
     className="flex flex-col items-center rounded-2xl bg-orange-100 shadow-[inset_0_0_0_1px_theme(colors.orange.200)] lg:flex-1"
@@ -25,25 +25,22 @@ const Card = ({ city }: { city: City }) => (
         </>
       )}
     </Link>
-    <Link
+    <CityCard
       href={`/cities/${city.slug}`}
-      className="group flex w-full flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3 transition hover:border-orange-200 hover:bg-orange-50 hover:shadow-lg"
+      className="hover:border-orange-200 hover:bg-orange-50"
     >
-      <div className="relative aspect-video h-48 w-full overflow-hidden rounded-lg lg:h-auto">
-        <Image
-          src={withBunny(city.screenshots[0].url)}
-          alt={city.name}
-          fill
-          className="object-cover transition group-hover:scale-105"
-        />
-      </div>
-      <div className="flex flex-col items-center text-center transition group-hover:text-orange-600">
-        <h4>{city.name}</h4>
-        <p className="text-foreground/50 text-sm transition group-hover:text-orange-600/50">
-          {city.headline}
-        </p>
-      </div>
-    </Link>
+      <CityCard.Image
+        src={withBunny(city.screenshots[0].url)}
+        alt={city.name}
+        className="h-48 w-full object-cover"
+      />
+      <CityCard.Title className="group-hover:text-orange-600">
+        {city.name}
+      </CityCard.Title>
+      <CityCard.Subtitle className="group-hover:text-orange-600/50">
+        {city.headline}
+      </CityCard.Subtitle>
+    </CityCard>
   </div>
 );
 
@@ -75,13 +72,13 @@ export const ContestSection = async () => {
         <Section.Content className="flex flex-col items-center gap-8">
           <div className="hidden w-full flex-row flex-wrap gap-4 lg:flex">
             {contestWinners.map(city => (
-              <Card key={city.slug} city={city} />
+              <ContestCityCard key={city.slug} city={city} />
             ))}
           </div>
           <HorizontalScrollable className="w-full lg:hidden">
             <div className="flex gap-4">
               {contestWinners.map(city => (
-                <Card key={city.slug} city={city} />
+                <ContestCityCard key={city.slug} city={city} />
               ))}
             </div>
           </HorizontalScrollable>

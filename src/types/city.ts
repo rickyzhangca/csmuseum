@@ -18,10 +18,11 @@ export type Contest = {
 
 export type Screenshot = {
   url: string;
-  alt?: string;
+  alt: string;
   width?: number;
   height?: number;
   season?: Season;
+  tags: string[];
 };
 
 export type City = {
@@ -32,7 +33,6 @@ export type City = {
   description: string;
   region: Region;
   seasons?: Season[];
-  tags: string[];
   youtubePlaylistUrl?: string;
   youtubePlaylistThumbnail?: string;
   screenshots: Screenshot[];

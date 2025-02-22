@@ -1,8 +1,7 @@
-import { getCityBySlug } from '@/content/cities';
-import { withBunny } from '@/utils';
+import { CityCard, HorizontalScrollable, Shot } from '@/components';
+import { cities } from '@/content';
+import { getCityBySlug, withBunny } from '@/utils';
 import { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -12,7 +11,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const city = getCityBySlug(params.slug);
+  const slug = (await params).slug;
+  const city = await getCityBySlug(slug);
 
   if (!city) {
     return {
@@ -27,111 +27,60 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function CityPage({ params }: Props) {
-  const city = getCityBySlug(params.slug);
+export default async function CityPage({ params }: Props) {
+  const slug = (await params).slug;
+  const city = await getCityBySlug(slug);
 
   if (!city) {
     notFound();
   }
 
+  // Get 3 random cities excluding current one
+  const otherCities = cities.filter(c => c.slug !== city.slug);
+  const randomCities = [...otherCities]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+
   return (
-    <div className="container flex flex-col gap-8 py-8">
-      <div className="flex flex-col gap-4">
-        <Link
-          href="/cities"
-          className="text-muted-foreground hover:text-foreground w-fit text-sm transition"
-        >
-          ← Back to Cities
-        </Link>
-        <h1 className="text-4xl font-bold">{city.name}</h1>
-        <p className="text-muted-foreground text-xl">{city.headline}</p>
+    <div className="max-w-8xl mx-auto p-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col items-center gap-2 py-20 text-center">
+        <h1>{city.name}</h1>
+        <p className="text-xl text-gray-500">{city.headline}</p>
       </div>
+      {city.screenshots.map(screenshot => (
+        <Shot
+          key={screenshot.url}
+          src={withBunny(screenshot.url)}
+          alt={screenshot.alt}
+        />
+      ))}
+      <div className="relative mt-20 pt-20 pb-16">
+        <div className="absolute top-0 left-1/2 h-px w-screen -translate-x-1/2 bg-gray-200" />
+        <div className="absolute top-0 left-1/2 -z-10 h-24 w-screen -translate-x-1/2 bg-gradient-to-b from-gray-50 to-transparent" />
+        <h2 className="mb-8 text-center text-2xl font-semibold">
+          Explore More Cities
+        </h2>
+        <HorizontalScrollable>
+          <div className="flex gap-4">
+            {randomCities.map(city => {
+              const firstScreenshot = city.screenshots?.[0];
+              if (!firstScreenshot) return null;
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {city.screenshots.map((screenshot, index) => (
-          <div
-            key={index}
-            className="relative aspect-video overflow-hidden rounded-lg"
-          >
-            <Image
-              src={withBunny(screenshot.url)}
-              alt={screenshot.alt || `${city.name} screenshot ${index + 1}`}
-              fill
-              className="object-cover"
-            />
+              return (
+                <CityCard key={city.slug} href={`/cities/${city.slug}`}>
+                  <CityCard.Image
+                    src={withBunny(firstScreenshot.url)}
+                    alt={firstScreenshot.alt || city.name}
+                    className="h-48 w-full object-cover"
+                  />
+                  <CityCard.Title>{city.name}</CityCard.Title>
+                  <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
+                </CityCard>
+              );
+            })}
           </div>
-        ))}
+        </HorizontalScrollable>
       </div>
-
-      <div className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold">About</h2>
-        <p className="text-muted-foreground">{city.description}</p>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold">Details</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div className="flex flex-col gap-2 rounded-lg border p-4">
-            <h3 className="font-medium">Region</h3>
-            <p className="text-muted-foreground">{city.region}</p>
-          </div>
-          <div className="flex flex-col gap-2 rounded-lg border p-4">
-            <h3 className="font-medium">Season</h3>
-            <p className="text-muted-foreground">{city.seasons.join(', ')}</p>
-          </div>
-          <div className="flex flex-col gap-2 rounded-lg border p-4">
-            <h3 className="font-medium">Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {city.tags.map(tag => (
-                <span
-                  key={tag}
-                  className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-sm"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {city.contest && (
-        <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-semibold">Contest</h2>
-          <div className="flex flex-col gap-2 rounded-lg border p-4">
-            <h3 className="font-medium">{city.contest.name}</h3>
-            <p className="text-muted-foreground">
-              {city.contest.placement} ({city.contest.year})
-            </p>
-          </div>
-        </div>
-      )}
-
-      {city.youtubePlaylistUrl && (
-        <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-semibold">YouTube Playlist</h2>
-          <Link
-            href={city.youtubePlaylistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative aspect-video overflow-hidden rounded-lg"
-          >
-            <Image
-              src={withBunny(
-                city.youtubePlaylistThumbnail || city.screenshots[0].url
-              )}
-              alt={`${city.name} YouTube playlist`}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-              <span className="text-lg font-medium text-white">
-                Watch on YouTube
-              </span>
-            </div>
-          </Link>
-        </div>
-      )}
     </div>
   );
 }

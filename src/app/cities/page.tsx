@@ -1,8 +1,7 @@
-import { cities } from '@/content/cities';
-import { withBunny } from '@/utils';
+import { CityCard, LinkButton } from '@/components';
+import { getAllCities, withBunny } from '@/utils';
+import { ArrowRightIcon } from 'lucide-react';
 import { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Cities - CSMuseum',
@@ -10,45 +9,45 @@ export const metadata: Metadata = {
 };
 
 export default function CitiesPage() {
+  const cities = getAllCities();
+
   return (
-    <div className="container flex flex-col gap-8 py-8">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-4xl font-bold">Cities</h1>
-        <p className="text-muted-foreground">
-          Explore all the cities in CSMuseum.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {cities.map(city => (
-          <Link
-            key={city.id}
-            href={`/cities/${city.slug}`}
-            className="group hover:bg-muted/50 flex flex-col gap-4 rounded-lg border p-4 transition"
-          >
-            <div className="relative aspect-video overflow-hidden rounded-lg">
-              <Image
-                src={withBunny(city.screenshots[0].url)}
-                alt={city.screenshots[0].alt || city.name}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-semibold">{city.name}</h2>
-              <p className="text-muted-foreground">{city.headline}</p>
-              <div className="flex flex-wrap gap-2">
-                {city.tags.map(tag => (
-                  <span
-                    key={tag}
-                    className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Link>
-        ))}
+    <div className="max-w-8xl mx-auto p-6">
+      <div className="flex flex-col items-center gap-16 py-16 text-center">
+        <div className="flex flex-col gap-4">
+          <h1>Explore our collection</h1>
+          <p className="text-xl text-gray-500">
+            CSMuseum is a hand-picked collection of the best cities from
+            talented creators worldwide.
+          </p>
+        </div>
+        <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+          {cities.map(city => {
+            const firstScreenshot = city.screenshots?.[0];
+            if (!firstScreenshot) return null;
+
+            return (
+              <CityCard key={city.slug} href={`/cities/${city.slug}`}>
+                <CityCard.Image
+                  src={withBunny(firstScreenshot.url)}
+                  alt={firstScreenshot.alt || city.name}
+                  className="h-48 w-full object-cover"
+                />
+                <CityCard.Title>{city.name}</CityCard.Title>
+                <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
+              </CityCard>
+            );
+          })}
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <LinkButton href="/cities">Add your own city</LinkButton>
+          <LinkButton href="/cities" variant="primary">
+            Nominate a great city
+            <LinkButton.Icon>
+              <ArrowRightIcon className="size-4" />
+            </LinkButton.Icon>
+          </LinkButton>
+        </div>
       </div>
     </div>
   );

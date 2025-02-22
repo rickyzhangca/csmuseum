@@ -1,5 +1,5 @@
 import { Logo } from '@/components';
-import { cities } from '@/content/cities';
+import { cities } from '@/content';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import Link from 'next/link';
@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full overflow-x-hidden">
       <body className={`${inter.variable} ${poppins.variable} min-h-full`}>
-        <nav>
+        <nav className="sticky top-0 z-50 border-b border-gray-950/10 bg-white/95 backdrop-blur-lg">
           <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <Link

@@ -6,7 +6,12 @@ import Link from 'next/link';
 import { Section } from '../section';
 
 export const TodaySection = async () => {
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+  const now = new Date();
+  const utcDate = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  );
+
+  const today = utcDate.toISOString().split('T')[0]; // YYYY-MM-DD format
   const dateHash = Array.from(today).reduce(
     (acc, char) => acc + char.charCodeAt(0),
     0
@@ -17,16 +22,19 @@ export const TodaySection = async () => {
 
   if (!featuredCity) return null;
 
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const formattedDate = formatter.format(utcDate);
+
   return (
     <Section>
       <Section.Header>
         <Section.Chip>
           <Dice3Icon className="size-4" strokeWidth={2} absoluteStrokeWidth />
-          City of{' '}
-          {new Date().toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-          })}
+          City of {formattedDate}
         </Section.Chip>
         <Section.Title>Today&apos;s City: {featuredCity.name}</Section.Title>
         <Section.Description>{featuredCity.headline}</Section.Description>

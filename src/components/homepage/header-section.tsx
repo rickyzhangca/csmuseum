@@ -2,6 +2,7 @@ import { tw, withBunny } from '@/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LinkButton } from '../link-button';
+import { LuckyButton } from '../lucky-button';
 
 const regions = [
   {
@@ -150,8 +151,10 @@ export const HeaderSection = () => {
         />
       </div>
       <div className="flex items-center justify-center gap-2">
-        <LinkButton href="/cities">Browse all cities</LinkButton>
-        <LinkButton href="/cities">I&apos;m feeling lucky</LinkButton>
+        <LinkButton href="/cities" target="_self">
+          Browse all cities
+        </LinkButton>
+        <LuckyButton />
       </div>
     </header>
   );

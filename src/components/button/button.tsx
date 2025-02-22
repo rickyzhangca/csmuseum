@@ -1,36 +1,32 @@
 import { tw } from '@/utils';
-import Link from 'next/link';
 import React from 'react';
 
-type LinkButtonProps = {
+type ButtonProps = {
   variant?: 'primary' | 'secondary';
-  target?: '_blank' | '_self';
+  onClick?: () => void;
   children: React.ReactNode;
-  href: string;
 };
 
-const LinkButtonContainer = ({
+const ButtonContainer = ({
   variant = 'secondary',
-  target = '_blank',
+  onClick,
   children,
-  href,
-}: LinkButtonProps) => {
+}: ButtonProps) => {
   const childrenArray = React.Children.toArray(children);
 
   const leftIcon = childrenArray.find(
-    child => React.isValidElement(child) && child.type === LinkButtonIconLeft
+    child => React.isValidElement(child) && child.type === ButtonIconLeft
   );
   const rightIcon = childrenArray.find(
-    child => React.isValidElement(child) && child.type === LinkButtonIconRight
+    child => React.isValidElement(child) && child.type === ButtonIconRight
   );
   const otherChildren = childrenArray.filter(
-    child => !React.isValidElement(child) || child.type !== LinkButtonIconRight
+    child => !React.isValidElement(child) || child.type !== ButtonIconRight
   );
 
   return (
-    <Link
-      href={href}
-      target={target}
+    <button
+      onClick={onClick}
       className={tw(
         'flex items-center justify-center gap-2 rounded-xl py-2 font-medium transition',
         rightIcon && leftIcon
@@ -48,21 +44,21 @@ const LinkButtonContainer = ({
       {leftIcon}
       {otherChildren}
       {rightIcon}
-    </Link>
+    </button>
   );
 };
-LinkButtonContainer.displayName = 'LinkButton';
+ButtonContainer.displayName = 'Button';
 
-const LinkButtonIconLeft = ({ children }: { children: React.ReactNode }) => {
+const ButtonIconLeft = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
-LinkButtonIconLeft.displayName = 'LinkButtonIconLeft';
+ButtonIconLeft.displayName = 'ButtonIconLeft';
 
-const LinkButtonIconRight = ({ children }: { children: React.ReactNode }) => {
+const ButtonIconRight = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
-LinkButtonIconRight.displayName = 'LinkButtonIconRight';
+ButtonIconRight.displayName = 'ButtonIconRight';
 
-export const LinkButton = Object.assign(LinkButtonContainer, {
-  Icon: LinkButtonIconRight,
+export const Button = Object.assign(ButtonContainer, {
+  Icon: ButtonIconRight,
 });
