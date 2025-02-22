@@ -112,7 +112,11 @@ export const SeasonSection = () => {
     <Section className="gap-6 sm:gap-16">
       <Section.Header>
         <Section.Chip className="bg-green-100 text-green-600">
-          <SunIcon className="size-4" strokeWidth={2} absoluteStrokeWidth />
+          <SunIcon
+            className="size-4 min-w-4"
+            strokeWidth={2}
+            absoluteStrokeWidth
+          />
           Seasonal Cities
         </Section.Chip>
         <Section.Title>Weathering the Grid</Section.Title>

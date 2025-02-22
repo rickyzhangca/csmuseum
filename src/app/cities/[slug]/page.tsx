@@ -1,6 +1,7 @@
 import { CityCard, HorizontalScrollable, Shot } from '@/components';
 import { cities } from '@/content';
 import { getCityBySlug, withBunny } from '@/utils';
+import { MedalIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -42,9 +43,23 @@ export default async function CityPage({ params }: Props) {
 
   return (
     <div className="max-w-8xl mx-auto p-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col items-center gap-2 py-20 text-center">
-        <h1>{city.name}</h1>
-        <p className="text-xl text-gray-500">{city.headline}</p>
+      <div className="flex flex-col items-center gap-12 py-20 text-center">
+        {city.contest && (
+          <div className="flex w-fit items-center justify-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-1.5 text-orange-600 select-none">
+            <MedalIcon className="size-4 min-w-4" />
+            {city.contest && (
+              <>
+                {city.contest.placement.charAt(0).toUpperCase() +
+                  city.contest.placement.slice(1)}{' '}
+                of {city.contest.name} in {city.contest.year}
+              </>
+            )}
+          </div>
+        )}
+        <div className="flex flex-col items-center gap-3">
+          <h1>{city.name}</h1>
+          <p className="text-xl text-gray-500">{city.headline}</p>
+        </div>
       </div>
       {city.screenshots.map(screenshot => (
         <Shot

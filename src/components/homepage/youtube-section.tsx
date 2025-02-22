@@ -13,7 +13,11 @@ export async function YouTubeSection() {
     <Section>
       <Section.Header>
         <Section.Chip className="bg-red-100 text-red-600">
-          <YoutubeIcon className="size-4" strokeWidth={2} absoluteStrokeWidth />
+          <YoutubeIcon
+            className="size-4 min-w-4"
+            strokeWidth={2}
+            absoluteStrokeWidth
+          />
           YouTube Playlists
         </Section.Chip>
         <Section.Title>City Biographies</Section.Title>

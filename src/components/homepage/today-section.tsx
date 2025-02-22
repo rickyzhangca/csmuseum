@@ -33,7 +33,11 @@ export const TodaySection = async () => {
     <Section>
       <Section.Header>
         <Section.Chip>
-          <Dice3Icon className="size-4" strokeWidth={2} absoluteStrokeWidth />
+          <Dice3Icon
+            className="size-4 min-w-4"
+            strokeWidth={2}
+            absoluteStrokeWidth
+          />
           City of {formattedDate}
         </Section.Chip>
         <Section.Title>Today&apos;s City: {featuredCity.name}</Section.Title>

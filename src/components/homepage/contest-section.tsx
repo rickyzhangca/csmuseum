@@ -60,7 +60,11 @@ export const ContestSection = async () => {
       <Section className="w-full">
         <Section.Header>
           <Section.Chip className="bg-orange-100 text-orange-600">
-            <MedalIcon className="size-4" strokeWidth={2} absoluteStrokeWidth />
+            <MedalIcon
+              className="size-4 min-w-4"
+              strokeWidth={2}
+              absoluteStrokeWidth
+            />
             Contest-winning cities
           </Section.Chip>
           <Section.Title>Hall of Mayors and Cities</Section.Title>

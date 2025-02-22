@@ -38,9 +38,9 @@ export default async function CitiesPage({ searchParams }: Props) {
                 : 'text-foreground bg-background border-gray-200 pr-5 hover:bg-gray-50'
             )}
           >
-            <MedalIcon className="size-4" />
+            <MedalIcon className="size-4 min-w-4" />
             Contest-winning cities
-            {isWinningFilter && <XIcon className="size-4" />}
+            {isWinningFilter && <XIcon className="size-4 min-w-4" />}
           </Link>
         </div>
         <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
@@ -66,7 +66,7 @@ export default async function CitiesPage({ searchParams }: Props) {
           <LinkButton href="/cities" variant="primary">
             Nominate a great city
             <LinkButton.Icon>
-              <ArrowRightIcon className="size-4" />
+              <ArrowRightIcon className="size-4 min-w-4" />
             </LinkButton.Icon>
           </LinkButton>
         </div>

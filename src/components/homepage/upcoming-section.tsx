@@ -22,7 +22,11 @@ const Card = ({ city }: { city: City }) => (
       <div className="absolute inset-0 bg-black/30" />
       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent p-4">
         <div className="flex items-center justify-center gap-2 text-center text-sm font-medium text-white">
-          <HardHatIcon className="size-4" strokeWidth={2} absoluteStrokeWidth />
+          <HardHatIcon
+            className="size-4 min-w-4"
+            strokeWidth={2}
+            absoluteStrokeWidth
+          />
           Being added to CSMuseum...
         </div>
       </div>
@@ -43,7 +47,11 @@ export const UpcomingSection = async () => {
     <Section className="rounded-3xl border border-gray-200 bg-[repeating-linear-gradient(45deg,#f9fafb,#f9fafb_4px,transparent_4px,transparent_8px)] px-5 py-10">
       <Section.Header>
         <Section.Chip className="border border-gray-300 bg-gray-100 text-gray-600">
-          <HardHatIcon className="size-4" strokeWidth={2} absoluteStrokeWidth />
+          <HardHatIcon
+            className="size-4 min-w-4"
+            strokeWidth={2}
+            absoluteStrokeWidth
+          />
           Coming Soon
         </Section.Chip>
         <Section.Title>Cities under Construction</Section.Title>
@@ -65,7 +73,7 @@ export const UpcomingSection = async () => {
           <LinkButton href="/cities" variant="primary">
             Nominate a great city
             <LinkButton.Icon>
-              <ArrowRightIcon className="size-4" />
+              <ArrowRightIcon className="size-4 min-w-4" />
             </LinkButton.Icon>
           </LinkButton>
         </div>
