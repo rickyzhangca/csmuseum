@@ -1,6 +1,7 @@
 export * from './button';
 export * from './city-card';
 export * from './diamond';
+export * from './feature-select';
 export * from './homepage';
 export * from './horizontal-scrollable';
 export * from './link-button';

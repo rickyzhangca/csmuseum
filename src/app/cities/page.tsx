@@ -1,4 +1,4 @@
-import { CityCard, LinkButton } from '@/components';
+import { CityCard, FeatureSelect, LinkButton } from '@/components';
 import { getAllCities, getContestWinners, tw, withBunny } from '@/utils';
 import { ArrowRightIcon, MedalIcon, XIcon } from 'lucide-react';
 import { Metadata } from 'next';
@@ -29,19 +29,22 @@ export default async function CitiesPage({ searchParams }: Props) {
               talented creators worldwide
             </p>
           </div>
-          <Link
-            href={isWinningFilter ? '/cities' : '/cities?filter=winning'}
-            className={tw(
-              'flex w-fit items-center justify-center gap-2 rounded-full border px-4 py-1.5 transition',
-              isWinningFilter
-                ? 'border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100'
-                : 'text-foreground bg-background border-gray-200 pr-5 hover:bg-gray-50'
-            )}
-          >
-            <MedalIcon className="size-4 min-w-4" />
-            Contest-winning cities
-            {isWinningFilter && <XIcon className="size-4 min-w-4" />}
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <FeatureSelect />
+            <Link
+              href={isWinningFilter ? '/cities' : '/cities?filter=winning'}
+              className={tw(
+                'flex w-fit items-center justify-center gap-2 rounded-full border px-4 py-1.5 transition',
+                isWinningFilter
+                  ? 'border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100'
+                  : 'text-foreground bg-background border-gray-200 pr-5 hover:bg-gray-50'
+              )}
+            >
+              <MedalIcon className="size-4 min-w-4" />
+              Contest-winning cities
+              {isWinningFilter && <XIcon className="size-4 min-w-4" />}
+            </Link>
+          </div>
         </div>
         <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
           {cities.map(city => {
