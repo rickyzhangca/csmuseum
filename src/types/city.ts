@@ -1,63 +1,42 @@
-import { withBunny } from '@/utils';
-import { z } from 'zod';
+export const Regions = [
+  'asia',
+  'europe',
+  'americas',
+  'africa',
+  'oceania',
+] as const;
+export type Region = (typeof Regions)[number];
 
-const ContestSchema = z.object({
-  name: z.string(),
-  placement: z.enum(['winner', 'runner-up', 'finalist']),
-  year: z.number(),
-});
+export const Seasons = ['spring', 'summer', 'fall', 'winter'] as const;
+export type Season = (typeof Seasons)[number];
 
-export const CityFrontmatterSchema = z.object({
-  slug: z.string(),
-  name: z.string(),
-  headline: z.string(),
-  region: z.string(),
-  season: z.string(),
-  tags: z.array(z.string()),
-  youtube_playlist_url: z.string().url().optional(),
-  youtube_playlist_thumbnail: z
-    .string()
-    .refine(
-      val => {
-        try {
-          new URL(withBunny(val));
-          return true;
-        } catch {
-          return false;
-        }
-      },
-      val => ({
-        message: `${val} is not a valid URL after Bunny CDN processing`,
-      })
-    )
-    .optional(),
-  screenshots: z.array(
-    z.string().refine(
-      val => {
-        try {
-          new URL(withBunny(val));
-          return true;
-        } catch {
-          return false;
-        }
-      },
-      val => ({
-        message: `${val} is not a valid URL after Bunny CDN processing`,
-      })
-    )
-  ),
-  featured: z.boolean(),
-  contest: ContestSchema.optional(),
-  date_added: z.string().optional(),
-  draft: z.boolean().optional(),
-});
-
-export type CityFrontmatter = z.infer<typeof CityFrontmatterSchema>;
-
-export type City = {
-  frontmatter: CityFrontmatter;
-  content: string;
-  slug: string;
+export type Contest = {
+  name: string;
+  placement: 'winner' | '2nd place' | '3rd place';
+  year: number;
 };
 
-export type CityMeta = Omit<City, 'content'>;
+export type Screenshot = {
+  url: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  season?: Season;
+};
+
+export type City = {
+  id: string;
+  slug: string;
+  name: string;
+  headline: string;
+  description: string;
+  region: Region;
+  seasons?: Season[];
+  tags: string[];
+  youtubePlaylistUrl?: string;
+  youtubePlaylistThumbnail?: string;
+  screenshots: Screenshot[];
+  contest?: Contest;
+  dateAdded: string;
+  draft?: boolean;
+};

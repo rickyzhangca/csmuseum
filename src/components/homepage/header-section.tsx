@@ -1,6 +1,7 @@
 import { tw, withBunny } from '@/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { LinkButton } from '../link-button';
 
 const regions = [
   {
@@ -76,7 +77,7 @@ const Card = ({
 
 export const HeaderSection = () => {
   return (
-    <header className="flex flex-col items-center gap-16 pt-16 pb-10 text-center">
+    <header className="flex flex-col items-center gap-16 pt-16 pb-4 text-center">
       <div className="flex flex-col gap-4">
         <h1>How do you city?</h1>
         <p className="text-xl text-gray-500">
@@ -148,14 +149,10 @@ export const HeaderSection = () => {
           className="row-span-2"
         />
       </div>
-
-      <Link
-        href="/cities"
-        target="_blank"
-        className="hover:text-foreground text-foreground/50 rounded-full border border-transparent px-4 py-2 transition-all hover:border-gray-300 hover:bg-gray-100"
-      >
-        Browse all cities
-      </Link>
+      <div className="flex items-center justify-center gap-2">
+        <LinkButton href="/cities">Browse all cities</LinkButton>
+        <LinkButton href="/cities">I&apos;m feeling lucky</LinkButton>
+      </div>
     </header>
   );
 };

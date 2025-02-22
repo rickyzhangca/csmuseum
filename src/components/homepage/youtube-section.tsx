@@ -1,11 +1,12 @@
-import { getAllCitiesMeta } from '@/utils/cities';
+import { cities } from '@/content/cities';
 import { YoutubeIcon } from 'lucide-react';
+import { LinkButton } from '../link-button';
 import { Section } from '../section';
 import { YouTubeSectionCards } from './youtube-section-cards';
 
-export const YouTubeSection = async () => {
-  const cities = (await getAllCitiesMeta())
-    .filter(city => city.frontmatter.youtube_playlist_url)
+export async function YouTubeSection() {
+  const citiesWithYoutube = cities
+    .filter(city => city.youtubePlaylistUrl)
     .slice(0, 5);
 
   return (
@@ -13,7 +14,7 @@ export const YouTubeSection = async () => {
       <Section.Header>
         <Section.Chip className="bg-red-100 text-red-600">
           <YoutubeIcon className="size-4" strokeWidth={2} absoluteStrokeWidth />
-          YouTube Sagas
+          YouTube Playlists
         </Section.Chip>
         <Section.Title>City Biographies</Section.Title>
         <Section.Description>
@@ -21,9 +22,10 @@ export const YouTubeSection = async () => {
           a time.
         </Section.Description>
       </Section.Header>
-      <Section.Content>
-        <YouTubeSectionCards cities={cities} />
+      <Section.Content className="flex flex-col items-center gap-12">
+        <YouTubeSectionCards cities={citiesWithYoutube} />
+        <LinkButton href="/cities">View all curated playlists</LinkButton>
       </Section.Content>
     </Section>
   );
-};
+}

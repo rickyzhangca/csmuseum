@@ -1,12 +1,12 @@
 'use client';
 
-import { CityMeta } from '@/types/city';
+import { City } from '@/types/city';
 import { tw, withBunny } from '@/utils';
 import { YoutubeIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
-import { useResizeObserver } from 'usehooks-ts';
+import { useEffect, useRef, useState } from 'react';
+import { HorizontalScrollable } from '../horizontal-scrollable';
 
 const CARD_WIDTH = 500;
 
@@ -22,14 +22,14 @@ const interpolate = (
 };
 
 type YouTubeSectionCardProps = {
-  city: CityMeta;
-  offset: number;
-  scale: number;
-  origin: number;
-  zIndex: number;
-  opacity: number;
-  isHovered: boolean;
-  onMouseEnter: () => void;
+  city: City;
+  offset?: number;
+  scale?: number;
+  origin?: number;
+  zIndex?: number;
+  opacity?: number;
+  isHovered?: boolean;
+  onMouseEnter?: () => void;
 };
 
 const YouTubeSectionCard = ({
@@ -44,10 +44,13 @@ const YouTubeSectionCard = ({
 }: YouTubeSectionCardProps) => {
   return (
     <div
-      className={tw('group absolute w-[500px] shrink-0 transition')}
+      className={tw(
+        'group w-[500px] shrink-0 transition',
+        !!offset && 'absolute'
+      )}
       style={{
-        zIndex: zIndex,
-        transform: `translateX(${offset}px)`,
+        zIndex: zIndex ?? 0,
+        transform: offset ? `translateX(${offset}px)` : undefined,
       }}
       onMouseEnter={onMouseEnter}
     >
@@ -58,28 +61,30 @@ const YouTubeSectionCard = ({
         )}
         style={{
           width: CARD_WIDTH,
-          transformOrigin: `${origin}% 50%`,
-          scale,
+          transformOrigin: origin ? `${origin}% 50%` : undefined,
+          scale: scale ?? 1,
         }}
       >
         <div className="relative -z-10 aspect-[1.91/1] w-full">
           <Image
-            src={withBunny(city.frontmatter.youtube_playlist_thumbnail)}
-            alt={city.frontmatter.name}
+            src={withBunny(
+              city.youtubePlaylistThumbnail || city.screenshots[0].url
+            )}
+            alt={`${city.name} YouTube playlist`}
             fill
             className="object-cover transition duration-400 ease-in-out"
             style={{
               scale: isHovered ? 1.08 : 1,
-              opacity,
+              opacity: opacity ?? 1,
             }}
           />
           <Link
-            href={city.frontmatter.youtube_playlist_url}
+            href={city.youtubePlaylistUrl || ''}
             target="_blank"
             rel="noopener noreferrer"
             className={tw(
               'absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 shadow-lg transition duration-300 ease-in-out hover:bg-red-700 hover:shadow-2xl',
-              isHovered ? 'opacity-100' : 'opacity-0'
+              !!isHovered && isHovered ? 'opacity-100' : 'opacity-0'
             )}
           >
             <YoutubeIcon
@@ -90,11 +95,9 @@ const YouTubeSectionCard = ({
             <p className="text-sm text-white">Watch the series</p>
           </Link>
         </div>
-        <div className="bg-foreground flex flex-col items-center p-4">
-          <h4 className="text-foreground-inverted">{city.frontmatter.name}</h4>
-          <p className="text-foreground-inverted/50 text-sm">
-            {city.frontmatter.headline}
-          </p>
+        <div className="to-background-inverted flex flex-col items-center bg-radial-[at_50%_0%] from-red-950 p-4">
+          <h4 className="text-foreground-inverted">{city.name}</h4>
+          <p className="text-foreground-inverted/50 text-sm">{city.headline}</p>
         </div>
       </div>
     </div>
@@ -121,43 +124,63 @@ const getOpacity = (zIndex: number, totalCities: number) => {
 };
 
 type YouTubeSectionCardsProps = {
-  cities: CityMeta[];
+  cities: City[];
 };
 
 export const YouTubeSectionCards = ({ cities }: YouTubeSectionCardsProps) => {
   const [hoveredIndex, setHoveredIndex] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const ref = useRef<HTMLDivElement>(null);
-  const { width = 0 } = useResizeObserver({
-    ref,
-    box: 'border-box',
-  });
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.getBoundingClientRect().width);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
 
   return (
-    <div ref={ref} className="relative flex h-90 items-center">
-      {cities.map((city, i) => {
-        const zIndex = getZIndex(i, hoveredIndex, cities.length);
-        const scale = getScale(zIndex, cities.length);
-        const opacity = getOpacity(zIndex, cities.length);
-        return (
-          <YouTubeSectionCard
-            key={city.slug}
-            city={city}
-            zIndex={zIndex}
-            offset={
-              (CARD_WIDTH -
-                Math.abs(width - CARD_WIDTH * cities.length) /
-                  (cities.length - 1)) *
-              i
-            }
-            origin={interpolate(i, [0, cities.length - 1], [0, 100])}
-            scale={scale}
-            opacity={opacity}
-            isHovered={hoveredIndex === i}
-            onMouseEnter={() => setHoveredIndex(i)}
-          />
-        );
-      })}
-    </div>
+    <>
+      <div
+        ref={containerRef}
+        className="relative hidden h-90 w-full items-center lg:flex"
+      >
+        {cities.map((city, i) => {
+          const zIndex = getZIndex(i, hoveredIndex, cities.length);
+          const scale = getScale(zIndex, cities.length);
+          const opacity = getOpacity(zIndex, cities.length);
+          return (
+            <YouTubeSectionCard
+              key={city.id}
+              city={city}
+              zIndex={zIndex}
+              offset={
+                (CARD_WIDTH -
+                  Math.abs(containerWidth - CARD_WIDTH * cities.length) /
+                    (cities.length - 1)) *
+                i
+              }
+              origin={interpolate(i, [0, cities.length - 1], [0, 100])}
+              scale={scale}
+              opacity={opacity}
+              isHovered={hoveredIndex === i}
+              onMouseEnter={() => setHoveredIndex(i)}
+            />
+          );
+        })}
+      </div>
+      <HorizontalScrollable className="w-full lg:hidden">
+        <div className="flex gap-2">
+          {cities.map(city => {
+            return <YouTubeSectionCard key={city.id} city={city} />;
+          })}
+        </div>
+      </HorizontalScrollable>
+    </>
   );
 };

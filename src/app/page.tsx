@@ -13,8 +13,8 @@ const Homepage = async () => {
       <HeaderSection />
       <TodaySection />
       <ContestSection />
-      <YouTubeSection />
       <SeasonSection />
+      <YouTubeSection />
       <UpcomingSection />
     </div>
   );

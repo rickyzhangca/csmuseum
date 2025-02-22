@@ -14,7 +14,12 @@ const isHeaderChild = (child: unknown): child is HeaderChild =>
   isValidElement(child) && typeof child.type !== 'string';
 
 const SectionRoot = ({ children, className }: SectionRootProps) => (
-  <section className={tw('my-24 flex flex-col gap-8', className)}>
+  <section
+    className={tw(
+      'my-12 flex flex-col gap-6 sm:my-16 sm:gap-8 lg:my-24',
+      className
+    )}
+  >
     {children}
   </section>
 );
@@ -51,7 +56,10 @@ const SectionHeader = memo(({ children, className }: SectionHeaderProps) => {
 
   return (
     <div
-      className={tw('flex flex-col items-center gap-7 text-center', className)}
+      className={tw(
+        'flex flex-col items-center gap-4 text-center sm:gap-7',
+        className
+      )}
     >
       {chip}
       {otherChildren.length > 0 && (

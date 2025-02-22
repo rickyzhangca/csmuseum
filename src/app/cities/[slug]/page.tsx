@@ -1,95 +1,137 @@
+import { getCityBySlug } from '@/content/cities';
 import { withBunny } from '@/utils';
-import { getCityBySlug, getCitySlugs } from '@/utils/cities';
+import { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
-import { MDXContent } from './mdx-content';
 
-export async function generateStaticParams() {
-  const slugs = getCitySlugs();
-  return slugs.map((slug: string) => ({ slug }));
+type Props = {
+  params: {
+    slug: string;
+  };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const city = getCityBySlug(params.slug);
+
+  if (!city) {
+    return {
+      title: 'City Not Found - CSMuseum',
+      description: 'The requested city could not be found.',
+    };
+  }
+
+  return {
+    title: `${city.name} - CSMuseum`,
+    description: city.description,
+  };
 }
 
-interface PageProps {
-  params: Promise<{ slug: string }> | { slug: string };
-}
+export default function CityPage({ params }: Props) {
+  const city = getCityBySlug(params.slug);
 
-export default async function CityPage({ params }: PageProps) {
-  try {
-    const resolvedParams = 'then' in params ? await params : params;
-    const city = await getCityBySlug(resolvedParams.slug);
-    const { frontmatter } = city;
-
-    return (
-      <article className="mx-auto max-w-4xl px-4 py-8">
-        <header className="mb-8">
-          <h1 className="mb-4 text-5xl font-bold">{frontmatter.name}</h1>
-          <p className="mb-4 text-xl text-gray-600">{frontmatter.headline}</p>
-          <div className="mb-4 flex flex-wrap gap-2">
-            {frontmatter.tags.map((tag: string) => (
-              <span
-                key={tag}
-                className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
-            <div>
-              <span className="font-semibold">Region:</span>{' '}
-              {frontmatter.region}
-            </div>
-            <div>
-              <span className="font-semibold">Season:</span>{' '}
-              {frontmatter.season}
-            </div>
-            <div>
-              <span className="font-semibold">Population:</span>{' '}
-              {frontmatter.stats.population}
-            </div>
-          </div>
-        </header>
-
-        {frontmatter.screenshots.length > 0 && (
-          <div className="mb-8">
-            <Image
-              src={withBunny(frontmatter.screenshots[0])}
-              alt={`Screenshot of ${frontmatter.name}`}
-              width={1200}
-              height={630}
-              className="h-[400px] w-full rounded-lg object-cover"
-            />
-          </div>
-        )}
-
-        <Suspense
-          fallback={
-            <div className="h-96 animate-pulse rounded-lg bg-gray-100" />
-          }
-        >
-          <MDXContent content={city.content} />
-        </Suspense>
-
-        {frontmatter.youtube && (
-          <div className="mt-12">
-            <h2 className="mb-4 text-2xl font-semibold">Video Tour</h2>
-            <div className="aspect-video">
-              <iframe
-                src={frontmatter.youtube.replace(
-                  'playlist',
-                  'embed/videoseries'
-                )}
-                className="h-full w-full rounded-lg"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        )}
-      </article>
-    );
-  } catch (error) {
+  if (!city) {
     notFound();
   }
+
+  return (
+    <div className="container flex flex-col gap-8 py-8">
+      <div className="flex flex-col gap-4">
+        <Link
+          href="/cities"
+          className="text-muted-foreground hover:text-foreground w-fit text-sm transition"
+        >
+          ← Back to Cities
+        </Link>
+        <h1 className="text-4xl font-bold">{city.name}</h1>
+        <p className="text-muted-foreground text-xl">{city.headline}</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {city.screenshots.map((screenshot, index) => (
+          <div
+            key={index}
+            className="relative aspect-video overflow-hidden rounded-lg"
+          >
+            <Image
+              src={withBunny(screenshot.url)}
+              alt={screenshot.alt || `${city.name} screenshot ${index + 1}`}
+              fill
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h2 className="text-2xl font-semibold">About</h2>
+        <p className="text-muted-foreground">{city.description}</p>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h2 className="text-2xl font-semibold">Details</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="flex flex-col gap-2 rounded-lg border p-4">
+            <h3 className="font-medium">Region</h3>
+            <p className="text-muted-foreground">{city.region}</p>
+          </div>
+          <div className="flex flex-col gap-2 rounded-lg border p-4">
+            <h3 className="font-medium">Season</h3>
+            <p className="text-muted-foreground">{city.seasons.join(', ')}</p>
+          </div>
+          <div className="flex flex-col gap-2 rounded-lg border p-4">
+            <h3 className="font-medium">Tags</h3>
+            <div className="flex flex-wrap gap-2">
+              {city.tags.map(tag => (
+                <span
+                  key={tag}
+                  className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {city.contest && (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl font-semibold">Contest</h2>
+          <div className="flex flex-col gap-2 rounded-lg border p-4">
+            <h3 className="font-medium">{city.contest.name}</h3>
+            <p className="text-muted-foreground">
+              {city.contest.placement} ({city.contest.year})
+            </p>
+          </div>
+        </div>
+      )}
+
+      {city.youtubePlaylistUrl && (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-2xl font-semibold">YouTube Playlist</h2>
+          <Link
+            href={city.youtubePlaylistUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative aspect-video overflow-hidden rounded-lg"
+          >
+            <Image
+              src={withBunny(
+                city.youtubePlaylistThumbnail || city.screenshots[0].url
+              )}
+              alt={`${city.name} YouTube playlist`}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+              <span className="text-lg font-medium text-white">
+                Watch on YouTube
+              </span>
+            </div>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 }

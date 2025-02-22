@@ -1,5 +1,5 @@
 import { Logo } from '@/components';
-import { getAllCitiesMeta } from '@/utils';
+import { cities } from '@/content/cities';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import Link from 'next/link';
@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full overflow-x-hidden">
       <body className={`${inter.variable} ${poppins.variable} min-h-full`}>
         <nav>
           <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,10 +49,7 @@ export default function RootLayout({
                 <Logo />
               </Link>
               <p className="text-foreground/50">
-                {(async () => {
-                  const cities = await getAllCitiesMeta();
-                  return `CSMuseum has collected ${cities.length} cities`;
-                })()}
+                Curated {cities.length} best cities
               </p>
             </div>
           </div>
