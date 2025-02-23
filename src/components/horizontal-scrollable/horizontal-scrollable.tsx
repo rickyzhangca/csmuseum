@@ -66,12 +66,6 @@ export const HorizontalScrollable = ({
         onScroll={checkScrollable}
       >
         <div className="mb-2 flex">{children}</div>
-        {/* <ScrollAreaScrollbar
-            orientation="horizontal"
-            className="flex h-2.5 touch-none flex-col border-t border-t-transparent p-[1px] transition select-none"
-          >
-            <ScrollAreaThumb className="relative flex-1 rounded-full bg-gray-950/10" />
-          </ScrollAreaScrollbar> */}
       </div>
     </div>
   );

@@ -206,8 +206,13 @@ export default async function CitiesPage({ searchParams }: Props) {
         )}
 
         <div className="flex items-center justify-center gap-2">
-          <LinkButton href="/cities">Add your own city</LinkButton>
-          <LinkButton href="/cities" variant="primary">
+          <LinkButton href="https://csmuseum.featurebase.app/">
+            Add your own city
+          </LinkButton>
+          <LinkButton
+            href="https://csmuseum.featurebase.app/"
+            variant="primary"
+          >
             Nominate a great city
             <LinkButton.Icon>
               <ArrowRightIcon className="size-4 min-w-4" />

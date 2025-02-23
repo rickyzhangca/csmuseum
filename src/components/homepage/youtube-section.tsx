@@ -1,6 +1,5 @@
 import { cities } from '@/content/cities';
 import { YoutubeIcon } from 'lucide-react';
-import { LinkButton } from '../link-button';
 import { Section } from '../section';
 import { YouTubeSectionCards } from './youtube-section-cards';
 
@@ -26,9 +25,8 @@ export async function YouTubeSection() {
           a time.
         </Section.Description>
       </Section.Header>
-      <Section.Content className="flex flex-col items-center gap-12">
+      <Section.Content className="flex flex-col items-center">
         <YouTubeSectionCards cities={citiesWithYoutube} />
-        <LinkButton href="/cities">View all curated playlists</LinkButton>
       </Section.Content>
     </Section>
   );

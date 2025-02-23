@@ -7,7 +7,7 @@ type ShotProps = {
 
 export const Shot = ({ src, alt }: ShotProps) => {
   return (
-    <figure className="relative flex flex-col items-end">
+    <figure className="relative flex flex-col items-end pt-1 pb-2">
       <div className="relative aspect-[2/1] w-full overflow-hidden rounded-2xl">
         <Image src={src} alt={alt} fill priority className="object-cover" />
       </div>

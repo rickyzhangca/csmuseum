@@ -69,9 +69,14 @@ export const UpcomingSection = async () => {
           </div>
         </HorizontalScrollable>
         <div className="flex items-center justify-center gap-2">
-          <LinkButton href="/cities">Add your own city</LinkButton>
-          <LinkButton href="/cities" variant="primary">
-            Nominate a great city
+          <LinkButton href="https://csmuseum.featurebase.app/">
+            Add your own city
+          </LinkButton>
+          <LinkButton
+            href="https://csmuseum.featurebase.app/"
+            variant="primary"
+          >
+            Submit a great city
             <LinkButton.Icon>
               <ArrowRightIcon className="size-4 min-w-4" />
             </LinkButton.Icon>
