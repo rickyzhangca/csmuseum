@@ -2,7 +2,7 @@
 
 import { tw } from '@/utils';
 import { Listbox, ListboxButton, ListboxOptions } from '@headlessui/react';
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const people = [
@@ -18,7 +18,7 @@ export const FeatureSelect = () => {
 
   return (
     <Listbox multiple value={selected} onChange={setSelected}>
-      <ListboxButton className="flex items-center justify-center gap-2 rounded-full border border-gray-200 py-1.5 pr-3 pl-5">
+      <ListboxButton className="bg-background flex items-center justify-center gap-2 rounded-full border border-gray-200 py-1.5 pr-3 pl-5 hover:cursor-pointer">
         {selected.length === 0 ? (
           <span>All features</span>
         ) : selected.length === 1 ? (
@@ -29,6 +29,16 @@ export const FeatureSelect = () => {
         <ChevronDownIcon
           className="group pointer-events-none size-4 min-w-4 opacity-50"
           aria-hidden="true"
+        />
+        <XIcon
+          className={tw(
+            'size-4 min-w-4 opacity-50',
+            selected.length === 0 && 'hidden'
+          )}
+          onClick={e => {
+            e.stopPropagation();
+            setSelected([]);
+          }}
         />
       </ListboxButton>
       <ListboxOptions

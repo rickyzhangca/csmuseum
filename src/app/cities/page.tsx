@@ -1,8 +1,14 @@
 import { CityCard, FeatureSelect, LinkButton } from '@/components';
 import { getAllCities, getContestWinners, tw, withBunny } from '@/utils';
-import { ArrowRightIcon, MedalIcon, XIcon } from 'lucide-react';
+import {
+  ArrowRightIcon,
+  Building2Icon,
+  SparkleIcon,
+  XIcon,
+} from 'lucide-react';
 import { Metadata } from 'next';
-import Link from 'next/link';
+import Link, { LinkProps } from 'next/link';
+import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
   title: 'Cities - CSMuseum',
@@ -13,15 +19,67 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+type TabType = 'cities' | 'features';
+
+const Tabs = ({ activeTab }: { activeTab: TabType }) => {
+  const Tab = ({
+    id,
+    href,
+    icon,
+    label,
+  }: {
+    id: string;
+    href: LinkProps['href'];
+    icon: ReactNode;
+    label: string;
+  }) => (
+    <Link
+      href={href}
+      className={tw(
+        'flex items-center justify-center gap-2 rounded-full border border-transparent px-4 py-1.5',
+        activeTab === id
+          ? 'text-foreground border-gray-200 bg-gray-100'
+          : 'hover:text-foreground text-gray-500'
+      )}
+    >
+      {icon}
+      {label}
+    </Link>
+  );
+
+  return (
+    <div className="flex items-center justify-center rounded-full border border-gray-200 p-1">
+      <Tab
+        id="cities"
+        href="/cities"
+        icon={<Building2Icon className="size-4 min-w-4" />}
+        label="By city"
+      />
+      <Tab
+        id="features"
+        href={{
+          pathname: '/cities',
+          query: { tab: 'features' },
+        }}
+        icon={<SparkleIcon className="size-4 min-w-4" />}
+        label="By feature"
+      />
+    </div>
+  );
+};
+
 export default async function CitiesPage({ searchParams }: Props) {
   const params = await searchParams;
   const isWinningFilter = params?.filter === 'winning';
+  const activeTab = (
+    params?.tab === 'features' ? 'features' : 'cities'
+  ) as TabType;
   const cities = isWinningFilter ? getContestWinners() : getAllCities();
 
   return (
     <div className="max-w-8xl mx-auto p-6">
       <div className="flex flex-col items-center gap-16 py-16 text-center">
-        <div className="flex flex-col items-center justify-center gap-16">
+        <div className="flex w-full flex-col items-center justify-center gap-16">
           <div className="flex flex-col items-center gap-4">
             <h1>Explore our collection</h1>
             <p className="text-xl text-gray-500">
@@ -29,41 +87,74 @@ export default async function CitiesPage({ searchParams }: Props) {
               talented creators worldwide
             </p>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <FeatureSelect />
-            <Link
-              href={isWinningFilter ? '/cities' : '/cities?filter=winning'}
-              className={tw(
-                'flex w-fit items-center justify-center gap-2 rounded-full border px-4 py-1.5 transition',
-                isWinningFilter
-                  ? 'border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100'
-                  : 'text-foreground bg-background border-gray-200 pr-5 hover:bg-gray-50'
-              )}
-            >
-              <MedalIcon className="size-4 min-w-4" />
-              Contest-winning cities
-              {isWinningFilter && <XIcon className="size-4 min-w-4" />}
-            </Link>
-          </div>
+          <Tabs activeTab={activeTab} />
         </div>
-        <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-          {cities.map(city => {
-            const firstScreenshot = city.screenshots?.[0];
-            if (!firstScreenshot) return null;
 
-            return (
-              <CityCard key={city.slug} href={`/cities/${city.slug}`}>
-                <CityCard.Image
-                  src={withBunny(firstScreenshot.url)}
-                  alt={firstScreenshot.alt || city.name}
-                  className="h-48 w-full object-cover"
-                />
-                <CityCard.Title>{city.name}</CityCard.Title>
-                <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
-              </CityCard>
-            );
-          })}
-        </div>
+        {activeTab === 'cities' ? (
+          <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4 md:col-span-2 lg:col-span-3">
+              <Link
+                href={{
+                  pathname: '/cities',
+                  query: {
+                    filter: isWinningFilter ? undefined : 'winning',
+                  },
+                }}
+                className={tw(
+                  'flex w-fit items-center justify-center gap-2 rounded-full border px-4 py-1.5 transition',
+                  isWinningFilter
+                    ? 'border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100'
+                    : 'text-foreground bg-background border-gray-200 pr-5 hover:bg-gray-50'
+                )}
+              >
+                Contest-winning cities
+                {isWinningFilter && <XIcon className="size-4 min-w-4" />}
+              </Link>
+            </div>
+            {cities.map(city => {
+              const firstScreenshot = city.screenshots?.[0];
+              if (!firstScreenshot) return null;
+
+              return (
+                <CityCard key={city.slug} href={`/cities/${city.slug}`}>
+                  <CityCard.Image
+                    src={withBunny(firstScreenshot.url)}
+                    alt={firstScreenshot.alt || city.name}
+                    className="h-48 w-full object-cover"
+                  />
+                  <CityCard.Title>{city.name}</CityCard.Title>
+                  <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
+                </CityCard>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="w-full">
+            <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+              <div className="flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4 md:col-span-2 lg:col-span-3">
+                <FeatureSelect />
+              </div>
+
+              {cities.map(city => {
+                const firstScreenshot = city.screenshots?.[0];
+                if (!firstScreenshot) return null;
+
+                return (
+                  <CityCard key={city.slug} href={`/cities/${city.slug}`}>
+                    <CityCard.Image
+                      src={withBunny(firstScreenshot.url)}
+                      alt={firstScreenshot.alt || city.name}
+                      className="h-48 w-full object-cover"
+                    />
+                    <CityCard.Title>{city.name}</CityCard.Title>
+                    <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
+                  </CityCard>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-center gap-2">
           <LinkButton href="/cities">Add your own city</LinkButton>
           <LinkButton href="/cities" variant="primary">
