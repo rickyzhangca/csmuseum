@@ -7,6 +7,7 @@ type LinkButtonProps = {
   target?: '_blank' | '_self';
   children: React.ReactNode;
   href: string;
+  className?: string;
 };
 
 const LinkButtonContainer = ({
@@ -14,6 +15,7 @@ const LinkButtonContainer = ({
   target = '_blank',
   children,
   href,
+  className,
 }: LinkButtonProps) => {
   const childrenArray = React.Children.toArray(children);
 
@@ -42,7 +44,8 @@ const LinkButtonContainer = ({
               : 'px-4',
         variant === 'primary'
           ? 'text-foreground-inverted bg-background-inverted border border-transparent hover:bg-gray-800 hover:shadow-lg'
-          : 'text-foreground bg-background border border-gray-300 hover:bg-gray-50 hover:shadow'
+          : 'text-foreground bg-background border border-gray-300 hover:bg-gray-50 hover:shadow',
+        className
       )}
     >
       {leftIcon}

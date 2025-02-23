@@ -1,4 +1,4 @@
-import { CityCard, FeatureSelect, LinkButton } from '@/components';
+import { CityCard, CityGallery, FeatureSelect, LinkButton } from '@/components';
 import { Feature } from '@/types';
 import {
   getAllCities,
@@ -87,10 +87,8 @@ export default async function CitiesPage({ searchParams }: Props) {
 
   let cities = isWinningFilter ? getContestWinners() : getAllCities();
 
-  // Filter cities by features if any are selected
   if (activeTab === 'features' && selectedFeatures.length > 0) {
     cities = cities.filter(city =>
-      // Check if any screenshot has all the selected features
       city.screenshots.some(
         screenshot =>
           screenshot.features &&
@@ -102,7 +100,7 @@ export default async function CitiesPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="max-w-8xl mx-auto p-6">
+    <div className="max-w-8xl mx-auto p-3 lg:p-6">
       <div className="flex flex-col items-center gap-16 py-16 text-center">
         <div className="flex w-full flex-col items-center justify-center gap-16">
           <div className="flex flex-col items-center gap-4">
@@ -159,12 +157,14 @@ export default async function CitiesPage({ searchParams }: Props) {
           </div>
         ) : (
           <div className="w-full">
-            <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-              <div className="flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4 md:col-span-2 lg:col-span-3">
+            <div className="grid w-full gap-2 md:grid-cols-2 lg:grid-cols-3">
+              <div className="col-span-3 flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4">
                 <div className="flex items-center gap-3">
                   <p className="text-gray-500">Show cities with</p>
                   <FeatureSelect features={features} />
-                  <p className="text-gray-500">features</p>
+                  <p className="text-gray-500">
+                    {selectedFeatures.length > 1 ? 'features' : 'feature'}
+                  </p>
                 </div>
               </div>
 
@@ -172,7 +172,24 @@ export default async function CitiesPage({ searchParams }: Props) {
                 const firstScreenshot = city.screenshots?.[0];
                 if (!firstScreenshot) return null;
 
-                return (
+                return selectedFeatures.length > 0 ? (
+                  <CityGallery
+                    key={city.slug}
+                    href={`/cities/${city.slug}`}
+                    className="col-span-3"
+                  >
+                    {city.screenshots.map(screenshot => (
+                      <CityGallery.Image
+                        key={screenshot.url}
+                        src={withBunny(screenshot.url)}
+                        alt={screenshot.alt || city.name}
+                        className="h-48 w-full object-cover"
+                      />
+                    ))}
+                    <CityGallery.Title>{city.name}</CityGallery.Title>
+                    <CityGallery.Subtitle>{city.headline}</CityGallery.Subtitle>
+                  </CityGallery>
+                ) : (
                   <CityCard key={city.slug} href={`/cities/${city.slug}`}>
                     <CityCard.Image
                       src={withBunny(firstScreenshot.url)}

@@ -28,6 +28,16 @@ export const desertOasis: City = {
       alt: 'Desert Oasis cityscape',
       features,
     },
+    {
+      url: '/ui/header-section/europe.webp',
+      alt: 'Desert Oasis cityscape',
+      features,
+    },
+    {
+      url: '/ui/header-section/europe.webp',
+      alt: 'Desert Oasis cityscape',
+      features,
+    },
   ],
   contest: {
     name: 'Sustainable Cities',
