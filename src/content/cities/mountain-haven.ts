@@ -15,8 +15,7 @@ export const mountainHaven: City = {
     {
       url: '/ui/header-section/europe.webp',
       alt: 'Alpine Echo mountain city panorama',
-      season: 'winter',
-      features: ['mountain', 'vertical', 'traditional', 'transport'],
+      features: ['mountain', 'winter'],
     },
   ],
   draft: true,

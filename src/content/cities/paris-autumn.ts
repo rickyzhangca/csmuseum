@@ -1,4 +1,14 @@
-import { City } from '@/types';
+import { City, Feature } from '@/types';
+
+const features: Feature[] = [
+  'europe',
+  'historic',
+  'dense',
+  'autumn-colors',
+  'planned',
+  'gardens',
+  'parks',
+];
 
 export const parisAutumn: City = {
   id: 'paris-autumn',
@@ -15,8 +25,7 @@ export const parisAutumn: City = {
     {
       url: '/ui/header-section/europe.webp',
       alt: 'Autumn in Paris cityscape',
-      season: 'fall',
-      features: ['european', 'historic', 'dense', 'autumn-colors'],
+      features,
     },
   ],
   contest: {

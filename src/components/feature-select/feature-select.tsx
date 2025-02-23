@@ -1,30 +1,49 @@
 'use client';
 
+import { Feature } from '@/types';
 import { tw } from '@/utils';
 import { Listbox, ListboxButton, ListboxOptions } from '@headlessui/react';
 import { ChevronDownIcon, XIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const people = [
-  { id: 1, name: 'Tom Cook' },
-  { id: 2, name: 'Wade Cooper' },
-  { id: 3, name: 'Tanya Fox' },
-  { id: 4, name: 'Arlene Mccoy' },
-  { id: 5, name: 'Devon Webb' },
-];
+type FeatureWithCount = {
+  id: Feature;
+  name: string;
+  count: number;
+};
 
-export const FeatureSelect = () => {
-  const [selected, setSelected] = useState([people[1]]);
+type Props = {
+  features: FeatureWithCount[];
+};
+
+export const FeatureSelect = ({ features }: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedFeatures = (searchParams.get('features')?.split(',') ||
+    []) as Feature[];
+
+  const selected = features.filter(f => selectedFeatures.includes(f.id));
+
+  const updateFeatures = (newSelected: FeatureWithCount[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newSelected.length > 0) {
+      params.set('features', newSelected.map(f => f.id).join(','));
+    } else {
+      params.delete('features');
+    }
+    params.set('tab', 'features');
+    router.push(`/cities?${params.toString()}`);
+  };
 
   return (
-    <Listbox multiple value={selected} onChange={setSelected}>
+    <Listbox multiple value={selected} onChange={updateFeatures}>
       <ListboxButton className="bg-background flex items-center justify-center gap-2 rounded-full border border-gray-200 py-1.5 pr-3 pl-5 hover:cursor-pointer">
         {selected.length === 0 ? (
-          <span>All features</span>
+          <span>Any</span>
         ) : selected.length === 1 ? (
           selected[0].name
         ) : (
-          `${selected.length} features selected`
+          `${selected.length} selected`
         )}
         <ChevronDownIcon
           className="group pointer-events-none size-4 min-w-4 opacity-50"
@@ -37,35 +56,44 @@ export const FeatureSelect = () => {
           )}
           onClick={e => {
             e.stopPropagation();
-            setSelected([]);
+            updateFeatures([]);
           }}
         />
       </ListboxButton>
       <ListboxOptions
         anchor="bottom"
+        modal={false}
         transition
         className={tw(
-          'relative mt-2 flex flex-col rounded-xl border border-gray-200 bg-white p-2 shadow-2xl',
+          'relative z-50 mt-2 flex flex-col rounded-xl border border-gray-200 bg-white p-2 shadow-2xl',
           'gap-0.5 transition duration-75 ease-in data-[leave]:data-[closed]:opacity-0'
         )}
       >
-        {people.map(person => (
+        {features.map(feature => (
           <button
-            key={person.name}
+            key={feature.id}
             onClick={() => {
-              const newSelected = selected.includes(person)
-                ? selected.filter(p => p.id !== person.id)
-                : [...selected, person];
-              setSelected(newSelected);
+              const newSelected = selected.includes(feature)
+                ? selected.filter(f => f.id !== feature.id)
+                : [...selected, feature];
+              updateFeatures(newSelected);
             }}
             className={tw(
-              'group flex w-full cursor-default items-center gap-2 rounded-lg border border-transparent px-3 py-1.5 transition duration-75 select-none',
-              selected.includes(person)
+              'group flex w-full cursor-default items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-1.5 transition duration-75 select-none',
+              selected.includes(feature)
                 ? 'bg-blue-100 text-blue-600 hover:border-blue-600/50'
                 : 'hover:border-gray-200 hover:bg-gray-100'
             )}
           >
-            {person.name}
+            <span>{feature.name}</span>
+            <span
+              className={tw(
+                'text-sm',
+                selected.includes(feature) ? 'text-blue-500' : 'text-gray-400'
+              )}
+            >
+              {feature.count}
+            </span>
           </button>
         ))}
       </ListboxOptions>

@@ -1,14 +1,4 @@
-export const Regions = [
-  'asia',
-  'europe',
-  'americas',
-  'africa',
-  'oceania',
-] as const;
-export type Region = (typeof Regions)[number];
-
-export const Seasons = ['spring', 'summer', 'fall', 'winter'] as const;
-export type Season = (typeof Seasons)[number];
+import { Feature, Region } from './feature';
 
 export type Contest = {
   name: string;
@@ -21,8 +11,7 @@ export type Screenshot = {
   alt: string;
   width?: number;
   height?: number;
-  season?: Season;
-  features: string[];
+  features: Feature[];
 };
 
 export type City = {
@@ -32,7 +21,6 @@ export type City = {
   headline: string;
   description: string;
   region: Region;
-  seasons?: Season[];
   youtubePlaylistUrl?: string;
   youtubePlaylistThumbnail?: string;
   screenshots: Screenshot[];

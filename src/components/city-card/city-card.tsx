@@ -26,7 +26,7 @@ const CityCardContainer = ({
     <Link
       href={href}
       className={tw(
-        'group flex w-full flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3 transition hover:z-50 hover:shadow-lg',
+        'group flex w-full flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3 transition hover:z-40 hover:shadow-lg',
         className
       )}
     >

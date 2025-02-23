@@ -1,5 +1,12 @@
 import { CityCard, FeatureSelect, LinkButton } from '@/components';
-import { getAllCities, getContestWinners, tw, withBunny } from '@/utils';
+import { Feature } from '@/types';
+import {
+  getAllCities,
+  getContestWinners,
+  getUniqueFeatures,
+  tw,
+  withBunny,
+} from '@/utils';
 import {
   ArrowRightIcon,
   Building2Icon,
@@ -74,7 +81,25 @@ export default async function CitiesPage({ searchParams }: Props) {
   const activeTab = (
     params?.tab === 'features' ? 'features' : 'cities'
   ) as TabType;
-  const cities = isWinningFilter ? getContestWinners() : getAllCities();
+  const selectedFeatures = ((params?.features as string)?.split(',') ||
+    []) as Feature[];
+  const features = getUniqueFeatures(selectedFeatures);
+
+  let cities = isWinningFilter ? getContestWinners() : getAllCities();
+
+  // Filter cities by features if any are selected
+  if (activeTab === 'features' && selectedFeatures.length > 0) {
+    cities = cities.filter(city =>
+      // Check if any screenshot has all the selected features
+      city.screenshots.some(
+        screenshot =>
+          screenshot.features &&
+          selectedFeatures.every(feature =>
+            screenshot.features.includes(feature)
+          )
+      )
+    );
+  }
 
   return (
     <div className="max-w-8xl mx-auto p-6">
@@ -93,23 +118,27 @@ export default async function CitiesPage({ searchParams }: Props) {
         {activeTab === 'cities' ? (
           <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
             <div className="flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4 md:col-span-2 lg:col-span-3">
-              <Link
-                href={{
-                  pathname: '/cities',
-                  query: {
-                    filter: isWinningFilter ? undefined : 'winning',
-                  },
-                }}
-                className={tw(
-                  'flex w-fit items-center justify-center gap-2 rounded-full border px-4 py-1.5 transition',
-                  isWinningFilter
-                    ? 'border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100'
-                    : 'text-foreground bg-background border-gray-200 pr-5 hover:bg-gray-50'
-                )}
-              >
-                Contest-winning cities
-                {isWinningFilter && <XIcon className="size-4 min-w-4" />}
-              </Link>
+              <div className="flex items-center gap-3">
+                <p className="text-gray-500">Show</p>
+                <Link
+                  href={{
+                    pathname: '/cities',
+                    query: {
+                      filter: isWinningFilter ? undefined : 'winning',
+                    },
+                  }}
+                  className={tw(
+                    'flex w-fit items-center justify-center gap-2 rounded-full border px-4 py-1.5 transition',
+                    isWinningFilter
+                      ? 'border-orange-200 bg-orange-50 text-orange-600 hover:bg-orange-100'
+                      : 'text-foreground bg-background border-gray-200 hover:bg-gray-50'
+                  )}
+                >
+                  {isWinningFilter ? 'Contest-winning' : 'All collected'}
+                  {isWinningFilter && <XIcon className="size-4 min-w-4" />}
+                </Link>
+                <p className="text-gray-500">cities</p>
+              </div>
             </div>
             {cities.map(city => {
               const firstScreenshot = city.screenshots?.[0];
@@ -132,7 +161,11 @@ export default async function CitiesPage({ searchParams }: Props) {
           <div className="w-full">
             <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
               <div className="flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4 md:col-span-2 lg:col-span-3">
-                <FeatureSelect />
+                <div className="flex items-center gap-3">
+                  <p className="text-gray-500">Show cities with</p>
+                  <FeatureSelect features={features} />
+                  <p className="text-gray-500">features</p>
+                </div>
               </div>
 
               {cities.map(city => {
