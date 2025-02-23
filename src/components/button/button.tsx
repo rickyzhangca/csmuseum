@@ -28,7 +28,7 @@ const ButtonContainer = ({
     <button
       onClick={onClick}
       className={tw(
-        'flex items-center justify-center gap-2 rounded-xl py-2 font-medium transition',
+        'flex cursor-pointer items-center justify-center gap-2 rounded-xl py-2 font-medium transition',
         rightIcon && leftIcon
           ? 'px-5'
           : rightIcon

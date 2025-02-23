@@ -213,7 +213,7 @@ export default async function CitiesPage({ searchParams }: Props) {
             href="https://csmuseum.featurebase.app/"
             variant="primary"
           >
-            Nominate a great city
+            Submit a great city
             <LinkButton.Icon>
               <ArrowRightIcon className="size-4 min-w-4" />
             </LinkButton.Icon>

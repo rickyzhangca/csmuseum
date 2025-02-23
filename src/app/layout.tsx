@@ -1,4 +1,10 @@
-import { Logo } from '@/components';
+import {
+  Logo,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components';
 import { cities } from '@/content';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
@@ -42,12 +48,21 @@ export default function RootLayout({
         <nav className="sticky top-0 z-50 border-b border-gray-950/10 bg-white/95 backdrop-blur-lg">
           <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-lg font-semibold hover:text-blue-600"
-              >
-                <Logo />
-              </Link>
+              <TooltipProvider delayDuration={50}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Link
+                      href="/"
+                      className="flex items-center gap-2 text-lg font-semibold hover:text-blue-600"
+                    >
+                      <Logo />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={10}>
+                    Return to home
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <p className="text-foreground/50">
                 Curated {cities.length} best cities
               </p>

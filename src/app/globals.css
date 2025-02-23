@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @plugin 'tailwind-scrollbar';
+@plugin 'tailwindcss-animate';
 
 @theme {
   --color-background: var(--background);

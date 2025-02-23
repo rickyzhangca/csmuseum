@@ -9,3 +9,4 @@ export * from './link-button';
 export * from './logo';
 export * from './section';
 export * from './shot';
+export * from './tooltip';
