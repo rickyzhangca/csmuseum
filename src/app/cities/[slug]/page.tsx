@@ -74,8 +74,8 @@ export default async function CityPage({ params }: Props) {
         <h2 className="mb-8 text-center text-2xl font-semibold">
           Explore More Cities
         </h2>
-        <HorizontalScrollable>
-          <div className="flex gap-4">
+        <HorizontalScrollable className="w-full">
+          <div className="flex w-full gap-4">
             {randomCities.map(city => {
               const firstScreenshot = city.screenshots?.[0];
               if (!firstScreenshot) return null;
