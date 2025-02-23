@@ -1,63 +1,75 @@
+import { Feature } from '@/types';
 import { tw, withBunny } from '@/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LinkButton } from '../link-button';
 import { LuckyButton } from '../lucky-button';
 
-const regions = [
+const regions: Array<{
+  feature: Feature;
+  src: string;
+  title: string;
+}> = [
   {
-    href: '/cities/north-american',
+    feature: 'americas',
     src: '/ui/header-section/europe.webp',
-    title: 'North American',
+    title: 'Americas',
   },
   {
-    href: '/cities/european',
+    feature: 'europe',
     src: '/ui/header-section/europe.webp',
     title: 'European',
   },
   {
-    href: '/cities/asian',
+    feature: 'asia',
     src: '/ui/header-section/europe.webp',
     title: 'Asian',
   },
 ] as const;
 
-const features = [
+const features: Array<{
+  feature: Feature;
+  src: string;
+  title: string;
+}> = [
   {
-    href: '/cities/interchanges',
+    feature: 'dense',
     src: '/ui/header-section/europe.webp',
-    title: 'Interchanges',
+    title: 'Dense',
   },
   {
-    href: '/cities/downtown',
+    feature: 'modern',
     src: '/ui/header-section/europe.webp',
-    title: 'Downtown',
+    title: 'Modern',
   },
   {
-    href: '/cities/suburb',
+    feature: 'historic',
     src: '/ui/header-section/europe.webp',
-    title: 'Suburb',
+    title: 'Historic',
   },
   {
-    href: '/cities/transit-hub',
+    feature: 'smart-city',
     src: '/ui/header-section/europe.webp',
-    title: 'Transit hub',
+    title: 'Smart City',
   },
 ] as const;
 
 const Card = ({
-  href,
+  feature,
   src,
   title,
   className,
 }: {
-  href: string;
+  feature: Feature;
   src: string;
   title: string;
   className?: string;
 }) => (
   <Link
-    href={href}
+    href={{
+      pathname: '/cities',
+      query: { tab: 'features', features: feature },
+    }}
     className={tw(
       'group/card relative flex items-center justify-center overflow-hidden rounded-2xl bg-gray-950 transition-all duration-300 group-hover/grid:opacity-70 hover:z-10 hover:scale-105 hover:opacity-100 hover:shadow-2xl',
       className
@@ -88,63 +100,63 @@ export const HeaderSection = () => {
 
       <div className="group/grid grid w-full grid-cols-2 gap-4 sm:hidden">
         <div className="col-span-2 flex flex-col gap-4">
-          {regions.map(({ href, src, title }) => (
-            <Card key={href} href={href} src={src} title={title} />
+          {regions.map(({ feature, src, title }) => (
+            <Card key={feature} feature={feature} src={src} title={title} />
           ))}
         </div>
-        {features.map(({ href, src, title }) => (
-          <Card key={href} href={href} src={src} title={title} />
+        {features.map(({ feature, src, title }) => (
+          <Card key={feature} feature={feature} src={src} title={title} />
         ))}
       </div>
 
       <div className="group/grid hidden w-full flex-col gap-4 sm:flex lg:hidden">
         <div className="flex flex-col gap-4 sm:flex-row">
-          {regions.map(({ href, src, title }) => (
-            <Card key={href} href={href} src={src} title={title} />
+          {regions.map(({ feature, src, title }) => (
+            <Card key={feature} feature={feature} src={src} title={title} />
           ))}
         </div>
         <div className="flex flex-col gap-4 sm:flex-row">
-          {features.map(({ href, src, title }) => (
-            <Card key={href} href={href} src={src} title={title} />
+          {features.map(({ feature, src, title }) => (
+            <Card key={feature} feature={feature} src={src} title={title} />
           ))}
         </div>
       </div>
 
       <div className="group/grid hidden h-[520px] w-full grid-flow-col grid-cols-5 grid-rows-2 gap-4 lg:grid">
         <Card
-          href={regions[0].href}
+          feature={regions[0].feature}
           src={regions[0].src}
           title={regions[0].title}
           className="row-span-2"
         />
         <Card
-          href={features[0].href}
+          feature={features[0].feature}
           src={features[0].src}
           title={features[0].title}
         />
         <Card
-          href={features[1].href}
+          feature={features[1].feature}
           src={features[1].src}
           title={features[1].title}
         />
         <Card
-          href={regions[1].href}
+          feature={regions[1].feature}
           src={regions[1].src}
           title={regions[1].title}
           className="row-span-2"
         />
         <Card
-          href={features[2].href}
+          feature={features[2].feature}
           src={features[2].src}
           title={features[2].title}
         />
         <Card
-          href={features[3].href}
+          feature={features[3].feature}
           src={features[3].src}
           title={features[3].title}
         />
         <Card
-          href={regions[2].href}
+          feature={regions[2].feature}
           src={regions[2].src}
           title={regions[2].title}
           className="row-span-2"

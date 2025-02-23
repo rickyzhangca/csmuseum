@@ -23,7 +23,7 @@ export const tokyoCyberpunk: City = {
   youtubePlaylistThumbnail: '/ui/header-section/asia.webp',
   screenshots: [
     {
-      url: '/ui/header-section/asia.webp',
+      url: '/ui/header-section/europe.webp',
       alt: 'Neo Tokyo night cityscape',
       features,
     },
