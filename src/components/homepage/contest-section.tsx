@@ -11,7 +11,7 @@ import { Section } from '../section';
 const ContestCityCard = ({ city }: { city: City }) => (
   <div
     key={city.slug}
-    className="flex flex-col items-center rounded-2xl bg-orange-100 shadow-[inset_0_0_0_1px_theme(colors.orange.200)] lg:flex-1"
+    className="flex snap-center flex-col items-center rounded-2xl bg-orange-100 shadow-[inset_0_0_0_1px_theme(colors.orange.200)] lg:flex-1"
   >
     <Link
       href={`/cities/${city.slug}`}

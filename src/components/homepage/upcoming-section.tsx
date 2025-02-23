@@ -10,7 +10,7 @@ import { Section } from '../section';
 const Card = ({ city }: { city: City }) => (
   <div
     key={city.slug}
-    className="group flex flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-4 transition"
+    className="group flex snap-center flex-col gap-3 rounded-2xl border border-gray-300 bg-white p-4 transition"
   >
     <div className="relative aspect-video h-48 w-full overflow-hidden rounded-lg">
       <Image

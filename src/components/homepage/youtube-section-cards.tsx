@@ -45,7 +45,7 @@ const YouTubeSectionCard = ({
   return (
     <div
       className={tw(
-        'group w-[500px] shrink-0 transition',
+        'group w-[500px] shrink-0 snap-center transition',
         !!offset && 'absolute'
       )}
       style={{
