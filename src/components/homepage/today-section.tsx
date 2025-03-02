@@ -1,5 +1,5 @@
 import { cities } from '@/content/cities';
-import { withBunny } from '@/utils';
+import { withBunnyShots } from '@/utils';
 import { Dice3Icon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -46,8 +46,8 @@ export const TodaySection = async () => {
       <Section.Content className="relative flex flex-col gap-4 rounded-3xl border border-gray-200 bg-gray-50 p-4 transition lg:flex-row">
         <div className="relative aspect-video w-full overflow-hidden rounded-xl lg:w-[70%]">
           <Image
-            src={withBunny(featuredCity.screenshots[0].url)}
-            alt={featuredCity.screenshots[0].alt || featuredCity.name}
+            src={withBunnyShots(featuredCity.id, 1)}
+            alt={featuredCity.name}
             fill
             className="object-cover"
             priority
@@ -56,11 +56,8 @@ export const TodaySection = async () => {
         <div className="flex flex-col items-center justify-center gap-4 lg:w-[30%]">
           <div className="relative hidden aspect-video w-full overflow-hidden rounded-xl lg:block">
             <Image
-              src={withBunny(
-                featuredCity.screenshots[1]?.url ||
-                  featuredCity.screenshots[0].url
-              )}
-              alt={featuredCity.screenshots[1]?.alt || featuredCity.name}
+              src={withBunnyShots(featuredCity.id, 2)}
+              alt={featuredCity.name}
               fill
               className="object-cover"
               priority
@@ -68,11 +65,8 @@ export const TodaySection = async () => {
           </div>
           <div className="relative hidden aspect-video w-full overflow-hidden rounded-xl lg:block">
             <Image
-              src={withBunny(
-                featuredCity.screenshots[2]?.url ||
-                  featuredCity.screenshots[0].url
-              )}
-              alt={featuredCity.screenshots[2]?.alt || featuredCity.name}
+              src={withBunnyShots(featuredCity.id, 3)}
+              alt={featuredCity.name}
               fill
               className="object-cover"
               priority

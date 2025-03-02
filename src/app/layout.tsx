@@ -47,7 +47,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${poppins.variable} min-h-full`}>
         <nav className="sticky top-0 z-50 border-b border-gray-950/10 bg-white/95 backdrop-blur-lg">
           <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-between">
+            <div className="flex h-14 items-center justify-between">
               <TooltipProvider delayDuration={50}>
                 <Tooltip>
                   <TooltipTrigger>

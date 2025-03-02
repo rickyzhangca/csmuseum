@@ -1,0 +1,4 @@
+Always use pnpm as the package manager.
+Use arrow functions instead of function declarations.
+Default to use type in Typescript over interface.
+Do not add comments unless explicitly told to do so.

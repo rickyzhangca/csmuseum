@@ -1,8 +1,8 @@
 export const Regions = [
-  'asia',
-  'europe',
-  'americas',
-  'africa',
-  'oceania',
+  'asian',
+  'european',
+  'american',
+  'african',
+  'oceanian',
   'diverse',
 ] as const;

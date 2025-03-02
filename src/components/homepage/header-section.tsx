@@ -1,28 +1,28 @@
-import { Feature } from '@/types';
-import { tw, withBunny } from '@/utils';
+import { Feature, Region } from '@/types';
+import { tw, withBunnyHeaderSection } from '@/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LinkButton } from '../link-button';
 import { LuckyButton } from '../lucky-button';
 
 const regions: Array<{
-  feature: Feature;
+  region: Region;
   src: string;
   title: string;
 }> = [
   {
-    feature: 'americas',
-    src: '/ui/header-section/europe.webp',
-    title: 'Americas',
+    region: 'american',
+    src: withBunnyHeaderSection('american'),
+    title: 'American',
   },
   {
-    feature: 'europe',
-    src: '/ui/header-section/europe.webp',
+    region: 'european',
+    src: withBunnyHeaderSection('european'),
     title: 'European',
   },
   {
-    feature: 'asia',
-    src: '/ui/header-section/europe.webp',
+    region: 'asian',
+    src: withBunnyHeaderSection('asian'),
     title: 'Asian',
   },
 ] as const;
@@ -33,34 +33,36 @@ const features: Array<{
   title: string;
 }> = [
   {
-    feature: 'dense',
-    src: '/ui/header-section/europe.webp',
-    title: 'Dense',
+    feature: 'intersections',
+    src: withBunnyHeaderSection('intersections'),
+    title: 'Intersections',
   },
   {
-    feature: 'modern',
-    src: '/ui/header-section/europe.webp',
-    title: 'Modern',
+    feature: 'downtown',
+    src: withBunnyHeaderSection('downtown'),
+    title: 'Downtown',
   },
   {
-    feature: 'historic',
-    src: '/ui/header-section/europe.webp',
-    title: 'Historic',
+    feature: 'transit hub',
+    src: withBunnyHeaderSection('transit-hub'),
+    title: 'Transit Hub',
   },
   {
-    feature: 'smart-city',
-    src: '/ui/header-section/europe.webp',
-    title: 'Smart City',
+    feature: 'suburb',
+    src: withBunnyHeaderSection('suburb'),
+    title: 'Suburb',
   },
 ] as const;
 
 const Card = ({
   feature,
+  region,
   src,
   title,
   className,
 }: {
-  feature: Feature;
+  feature?: Feature;
+  region?: Region;
   src: string;
   title: string;
   className?: string;
@@ -68,7 +70,9 @@ const Card = ({
   <Link
     href={{
       pathname: '/cities',
-      query: { tab: 'features', features: feature },
+      query: feature
+        ? { tab: 'features', features: feature }
+        : { tab: 'features', regions: region },
     }}
     className={tw(
       'group/card relative flex items-center justify-center overflow-hidden rounded-2xl bg-gray-950 transition-all duration-300 group-hover/grid:opacity-70 hover:z-10 hover:scale-105 hover:opacity-100 hover:shadow-2xl',
@@ -76,7 +80,7 @@ const Card = ({
     )}
   >
     <Image
-      src={withBunny(src)}
+      src={src}
       alt={title}
       width={1280}
       height={720}
@@ -100,8 +104,8 @@ export const HeaderSection = () => {
 
       <div className="group/grid grid w-full grid-cols-2 gap-4 sm:hidden">
         <div className="col-span-2 flex flex-col gap-4">
-          {regions.map(({ feature, src, title }) => (
-            <Card key={feature} feature={feature} src={src} title={title} />
+          {regions.map(({ region, src, title }) => (
+            <Card key={region} region={region} src={src} title={title} />
           ))}
         </div>
         {features.map(({ feature, src, title }) => (
@@ -111,8 +115,8 @@ export const HeaderSection = () => {
 
       <div className="group/grid hidden w-full flex-col gap-4 sm:flex lg:hidden">
         <div className="flex flex-col gap-4 sm:flex-row">
-          {regions.map(({ feature, src, title }) => (
-            <Card key={feature} feature={feature} src={src} title={title} />
+          {regions.map(({ region, src, title }) => (
+            <Card key={region} region={region} src={src} title={title} />
           ))}
         </div>
         <div className="flex flex-col gap-4 sm:flex-row">
@@ -124,7 +128,7 @@ export const HeaderSection = () => {
 
       <div className="group/grid hidden h-[520px] w-full grid-flow-col grid-cols-5 grid-rows-2 gap-4 lg:grid">
         <Card
-          feature={regions[0].feature}
+          region={regions[0].region}
           src={regions[0].src}
           title={regions[0].title}
           className="row-span-2"
@@ -140,7 +144,7 @@ export const HeaderSection = () => {
           title={features[1].title}
         />
         <Card
-          feature={regions[1].feature}
+          region={regions[1].region}
           src={regions[1].src}
           title={regions[1].title}
           className="row-span-2"
@@ -156,7 +160,7 @@ export const HeaderSection = () => {
           title={features[3].title}
         />
         <Card
-          feature={regions[2].feature}
+          region={regions[2].region}
           src={regions[2].src}
           title={regions[2].title}
           className="row-span-2"

@@ -86,3 +86,7 @@
     animation: aurora 60s linear infinite;
   }
 }
+
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
+}

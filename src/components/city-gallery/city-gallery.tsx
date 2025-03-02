@@ -1,6 +1,7 @@
 import { tw } from '@/utils';
 import Image from 'next/image';
 import { Children, ReactNode, isValidElement } from 'react';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '../dialog';
 import { HorizontalScrollable } from '../horizontal-scrollable';
 import { LinkButton } from '../link-button';
 
@@ -36,10 +37,10 @@ const CityGalleryContainer = ({
           {subtitleComponent}
         </div>
         <LinkButton href={href} className="hidden sm:block" target="_self">
-          View city
+          Explore city
         </LinkButton>
         <LinkButton href={href} className="block sm:hidden" target="_self">
-          View
+          Explore
         </LinkButton>
       </div>
       <HorizontalScrollable className="mb-px bg-gradient-to-b from-gray-100 to-transparent pt-4">
@@ -60,14 +61,30 @@ const CityGalleryImage = ({
   alt: string;
   className?: string;
 }) => (
-  <div className="relative aspect-video h-64 snap-center overflow-hidden rounded-lg md:h-80 lg:h-[480px]">
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      className={tw('object-cover transition select-none', className)}
-    />
-  </div>
+  <Dialog>
+    <DialogTrigger asChild>
+      <div className="relative aspect-video h-64 cursor-pointer snap-center overflow-hidden rounded-lg md:h-80 lg:h-[480px]">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          loading="lazy"
+          className={tw('object-cover transition select-none', className)}
+        />
+      </div>
+    </DialogTrigger>
+    <DialogContent className="h-fit w-fit border-0 bg-transparent">
+      <DialogTitle className="sr-only">{alt}</DialogTitle>
+      <Image
+        src={src}
+        alt={alt}
+        priority
+        width={1920}
+        height={1080}
+        className="rounded-2xl object-contain"
+      />
+    </DialogContent>
+  </Dialog>
 );
 CityGalleryImage.displayName = 'CityGalleryImage';
 

@@ -1,6 +1,6 @@
 import { cities } from '@/content/cities';
 import { City } from '@/types/city';
-import { withBunny } from '@/utils';
+import { withBunnyThumbnail } from '@/utils';
 import { ArrowRightIcon, HardHatIcon } from 'lucide-react';
 import Image from 'next/image';
 import { HorizontalScrollable } from '../horizontal-scrollable';
@@ -14,7 +14,7 @@ const Card = ({ city }: { city: City }) => (
   >
     <div className="relative aspect-video h-48 w-full overflow-hidden rounded-lg">
       <Image
-        src={withBunny(city.screenshots[0].url)}
+        src={withBunnyThumbnail(city.slug)}
         alt={city.name}
         fill
         className="object-cover"

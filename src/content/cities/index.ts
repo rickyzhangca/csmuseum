@@ -1,21 +1,8 @@
-import { desertOasis } from './desert-oasis';
-import { desertTech } from './desert-tech';
-import { fjordWinter } from './fjord-winter';
-import { industrialGrim } from './industrial-grim';
-import { mountainHaven } from './mountain-haven';
-import { mountainSpring } from './mountain-spring';
-import { newYorkSprawl } from './new-york-sprawl';
-import { parisAutumn } from './paris-autumn';
-import { tokyoCyberpunk } from './tokyo-cyberpunk';
+import { City } from '@/types';
+import { chongKhamTown } from './chong-kham-town';
+import { merlionBay } from './merlion-bay';
+import { test1 } from './test1';
+import { test2 } from './test2';
+import { test3 } from './test3';
 
-export const cities = [
-  desertOasis,
-  desertTech,
-  fjordWinter,
-  industrialGrim,
-  mountainHaven,
-  mountainSpring,
-  newYorkSprawl,
-  parisAutumn,
-  tokyoCyberpunk,
-];
+export const cities: City[] = [chongKhamTown, merlionBay, test1, test2, test3];

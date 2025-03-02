@@ -1,11 +1,19 @@
-import { CityCard, CityGallery, FeatureSelect, LinkButton } from '@/components';
-import { Feature } from '@/types';
+import {
+  CityCard,
+  CityGallery,
+  FeatureSelect,
+  LinkButton,
+  RegionSelect,
+} from '@/components';
+import { Feature, Region } from '@/types';
 import {
   getAllCities,
   getContestWinners,
   getUniqueFeatures,
+  getUniqueRegions,
   tw,
-  withBunny,
+  withBunnyShots,
+  withBunnyThumbnail,
 } from '@/utils';
 import {
   ArrowRightIcon,
@@ -83,20 +91,21 @@ export default async function CitiesPage({ searchParams }: Props) {
   ) as TabType;
   const selectedFeatures = ((params?.features as string)?.split(',') ||
     []) as Feature[];
+  const selectedRegions = ((params?.regions as string)?.split(',') ||
+    []) as Region[];
   const features = getUniqueFeatures(selectedFeatures);
+  const regions = getUniqueRegions(selectedRegions);
 
   let cities = isWinningFilter ? getContestWinners() : getAllCities();
 
   if (activeTab === 'features' && selectedFeatures.length > 0) {
     cities = cities.filter(city =>
-      city.screenshots.some(
-        screenshot =>
-          screenshot.features &&
-          selectedFeatures.every(feature =>
-            screenshot.features.includes(feature)
-          )
-      )
+      city.features.some(feature => selectedFeatures.includes(feature))
     );
+  }
+
+  if (selectedRegions.length > 0) {
+    cities = cities.filter(city => selectedRegions.includes(city.region));
   }
 
   return (
@@ -138,29 +147,26 @@ export default async function CitiesPage({ searchParams }: Props) {
                 <p className="text-gray-500">cities</p>
               </div>
             </div>
-            {cities.map(city => {
-              const firstScreenshot = city.screenshots?.[0];
-              if (!firstScreenshot) return null;
-
-              return (
-                <CityCard key={city.slug} href={`/cities/${city.slug}`}>
-                  <CityCard.Image
-                    src={withBunny(firstScreenshot.url)}
-                    alt={firstScreenshot.alt || city.name}
-                    className="h-48 w-full object-cover"
-                  />
-                  <CityCard.Title>{city.name}</CityCard.Title>
-                  <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
-                </CityCard>
-              );
-            })}
+            {cities.map(city => (
+              <CityCard key={city.slug} href={`/cities/${city.slug}`}>
+                <CityCard.Image
+                  src={withBunnyThumbnail(city.slug)}
+                  alt={city.name}
+                  className="h-48 w-full object-cover"
+                />
+                <CityCard.Title>{city.name}</CityCard.Title>
+                <CityCard.Subtitle>{city.headline}</CityCard.Subtitle>
+              </CityCard>
+            ))}
           </div>
         ) : (
           <div className="w-full">
             <div className="grid w-full gap-2 md:grid-cols-2 lg:grid-cols-3">
               <div className="col-span-3 flex w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-2 py-4">
-                <div className="flex items-center gap-3">
-                  <p className="text-gray-500">Show cities with</p>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <p className="text-gray-500">Show</p>
+                  <RegionSelect regions={regions} />
+                  <p className="text-gray-500">cities highlighting</p>
                   <FeatureSelect features={features} />
                   <p className="text-gray-500">
                     {selectedFeatures.length > 1 ? 'features' : 'feature'}
@@ -169,31 +175,30 @@ export default async function CitiesPage({ searchParams }: Props) {
               </div>
 
               {cities.map(city => {
-                const firstScreenshot = city.screenshots?.[0];
-                if (!firstScreenshot) return null;
-
                 return selectedFeatures.length > 0 ? (
                   <CityGallery
                     key={city.slug}
                     href={`/cities/${city.slug}`}
                     className="col-span-3"
                   >
-                    {city.screenshots.map(screenshot => (
-                      <CityGallery.Image
-                        key={screenshot.url}
-                        src={withBunny(screenshot.url)}
-                        alt={screenshot.alt || city.name}
-                        className="h-48 w-full object-cover"
-                      />
-                    ))}
+                    {Array.from({ length: city.screenshotCount }).map(
+                      (_, i) => (
+                        <CityGallery.Image
+                          key={i}
+                          src={withBunnyShots(city.id, i + 1)}
+                          alt={city.name}
+                          className="h-48 w-full object-cover"
+                        />
+                      )
+                    )}
                     <CityGallery.Title>{city.name}</CityGallery.Title>
                     <CityGallery.Subtitle>{city.headline}</CityGallery.Subtitle>
                   </CityGallery>
                 ) : (
                   <CityCard key={city.slug} href={`/cities/${city.slug}`}>
                     <CityCard.Image
-                      src={withBunny(firstScreenshot.url)}
-                      alt={firstScreenshot.alt || city.name}
+                      src={withBunnyThumbnail(city.slug)}
+                      alt={city.name}
                       className="h-48 w-full object-cover"
                     />
                     <CityCard.Title>{city.name}</CityCard.Title>

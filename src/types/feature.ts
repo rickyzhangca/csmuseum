@@ -1,9 +1,16 @@
-import { Regions, Seasons } from '@/content';
+import { FeatureCategories } from '@/content';
 
-import { OtherFeatures } from '@/content';
+export type FeatureCategory = keyof typeof FeatureCategories;
 
-export type Region = (typeof Regions)[number];
+export const CategoryDisplayNames: Record<FeatureCategory, string> = {
+  transportation: 'Transportation',
+  time: 'Time of Day',
+  architectural: 'Architectural',
+  urban: 'Urban',
+  natural: 'Natural',
+  special: 'Special',
+};
 
-export type Season = (typeof Seasons)[number];
+export const Features = Object.values(FeatureCategories).flat();
 
-export type Feature = (typeof OtherFeatures)[number] | Region | Season;
+export type Feature = (typeof Features)[number];

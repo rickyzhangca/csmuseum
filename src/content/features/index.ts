@@ -1,3 +1,3 @@
-export * from './other-features';
+export * from './features';
 export * from './regions';
 export * from './seasons';

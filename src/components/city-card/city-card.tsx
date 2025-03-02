@@ -54,6 +54,7 @@ const CityCardImage = ({
     src={src}
     alt={alt}
     fill
+    loading="lazy"
     className={tw('object-cover transition group-hover:scale-105', className)}
   />
 );

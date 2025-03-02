@@ -1,5 +1,5 @@
 import { City } from '@/types/city';
-import { getContestWinners, withBunny } from '@/utils';
+import { getContestWinners, withBunnyThumbnail } from '@/utils';
 import { MedalIcon } from 'lucide-react';
 import Link from 'next/link';
 import { CityCard } from '../city-card';
@@ -30,7 +30,7 @@ const ContestCityCard = ({ city }: { city: City }) => (
       className="hover:border-orange-200 hover:bg-orange-50"
     >
       <CityCard.Image
-        src={withBunny(city.screenshots[0].url)}
+        src={withBunnyThumbnail(city.slug)}
         alt={city.name}
         className="h-48 w-full object-cover"
       />

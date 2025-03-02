@@ -1,6 +1,6 @@
 import { cities } from '@/content/cities';
-import { City, Feature } from '@/types';
-import { tw, withBunny } from '@/utils';
+import { City } from '@/types';
+import { tw, withBunnyShots } from '@/utils';
 import { SunIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,25 +12,25 @@ const seasonInfo = {
     title: 'Spring Renewal',
     titleGradient: 'from-green-500 to-emerald-600',
     imageGradient: 'from-green-900/90 to-transparent',
-    feature: 'spring' as Feature,
+    feature: 'spring',
   },
   summer: {
     title: 'Summer Heat',
     titleGradient: 'from-yellow-500 to-orange-600',
     imageGradient: 'from-yellow-900/90 to-transparent',
-    feature: 'summer' as Feature,
+    feature: 'summer',
   },
   fall: {
     title: 'Autumn Colors',
     titleGradient: 'from-red-500 to-orange-600',
     imageGradient: 'from-red-900/90 to-transparent',
-    feature: 'autumn-colors' as Feature,
+    feature: 'autumn-colors',
   },
   winter: {
     title: 'Winter Wonder',
     titleGradient: 'from-blue-500 to-indigo-600',
     imageGradient: 'from-blue-900/90 to-transparent',
-    feature: 'winter' as Feature,
+    feature: 'winter',
   },
 } as const;
 
@@ -39,19 +39,16 @@ const citiesBySeason = cities.reduce(
     acc: Record<string, { cities: City[]; screenshotCount: number }>,
     city: City
   ) => {
-    city.screenshots.forEach(screenshot => {
-      Object.entries(seasonInfo).forEach(([season, info]) => {
-        if (screenshot.features?.includes(info.feature)) {
-          if (!acc[season]) {
-            acc[season] = { cities: [], screenshotCount: 0 };
-          }
-          if (!acc[season].cities.includes(city)) {
-            acc[season].cities.push(city);
-          }
-          acc[season].screenshotCount++;
-        }
-      });
-    });
+    if (city.season) {
+      const season = city.season;
+      if (!acc[season]) {
+        acc[season] = { cities: [], screenshotCount: 0 };
+      }
+      if (!acc[season].cities.includes(city)) {
+        acc[season].cities.push(city);
+      }
+      acc[season].screenshotCount += city.screenshotCount;
+    }
     return acc;
   },
   {}
@@ -70,7 +67,7 @@ const Card = ({
     key={season}
     href={{
       pathname: '/cities',
-      query: { tab: 'features', features: seasonInfo[season].feature },
+      query: { tab: 'seasons', season },
     }}
     className={tw(
       'group relative flex flex-col items-center gap-4 rounded-2xl border transition hover:z-10 hover:shadow-2xl',
@@ -87,7 +84,7 @@ const Card = ({
     </p>
     <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
       <Image
-        src={withBunny(cities[0].screenshots[0].url)}
+        src={withBunnyShots(cities[0].id, 0)}
         alt={`${season} cities`}
         fill
         className="object-cover transition duration-300 group-hover:scale-105"

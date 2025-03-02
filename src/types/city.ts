@@ -1,17 +1,13 @@
-import { Feature, Region } from './feature';
+import { Regions } from '@/content';
+import { Feature } from './feature';
+import { Season } from './season';
+
+export type Region = (typeof Regions)[number];
 
 export type Contest = {
   name: string;
   placement: 'winner' | '2nd place' | '3rd place';
   year: number;
-};
-
-export type Screenshot = {
-  url: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  features: Feature[];
 };
 
 export type City = {
@@ -21,9 +17,12 @@ export type City = {
   headline: string;
   description: string;
   region: Region;
+  creator: string;
+  gameVersion: 1 | 2;
   youtubePlaylistUrl?: string;
-  youtubePlaylistThumbnail?: string;
-  screenshots: Screenshot[];
+  features: Feature[];
+  screenshotCount: number;
+  season?: Season;
   contest?: Contest;
   dateAdded: string;
   draft?: boolean;
