@@ -12,3 +12,4 @@ export * from './region-select';
 export * from './section';
 export * from './shot';
 export * from './tooltip';
+export * from './ui';

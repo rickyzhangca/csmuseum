@@ -46,8 +46,8 @@ export default function RootLayout({
     <html lang="en" className="h-full overflow-x-hidden">
       <body className={`${inter.variable} ${poppins.variable} min-h-full`}>
         <nav className="sticky top-0 z-50 border-b border-gray-950/10 bg-white/95 backdrop-blur-lg">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex h-14 items-center justify-between">
+          <div className="max-w-10xl mx-auto px-4 py-6 md:px-20">
+            <div className="flex items-center justify-between">
               <TooltipProvider delayDuration={50}>
                 <Tooltip>
                   <TooltipTrigger>
@@ -69,7 +69,7 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
-        <main>{children}</main>
+        <main className="max-w-10xl mx-auto px-4 md:px-20">{children}</main>
         <footer className="border-t bg-gray-100 py-16">
           <div className="max-w-8xl mx-auto px-4 text-center text-sm text-gray-400">
             CSMuseum is proudly non-profit, ad-free, independent, and
