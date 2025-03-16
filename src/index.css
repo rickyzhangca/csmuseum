@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* https://base-ui.com/react/overview/quick-start#set-up-portals*/
+#root {
+  isolation: isolate; 
+}
