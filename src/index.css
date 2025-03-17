@@ -2,5 +2,14 @@
 
 /* https://base-ui.com/react/overview/quick-start#set-up-portals*/
 #root {
-  isolation: isolate; 
+  isolation: isolate;
+}
+
+@theme {
+  --breakpoint-3xl: 160rem;
+  --spacing-8xl: 160rem;
+}
+
+h1 {
+  @apply text-5xl font-medium;
 }
