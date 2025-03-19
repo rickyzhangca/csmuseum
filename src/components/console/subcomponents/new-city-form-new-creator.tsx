@@ -2,6 +2,7 @@ import { Button, Field, Form, Select } from '@/primitives';
 import { useStore } from '@/store';
 import { useState } from 'react';
 import { z } from 'zod';
+import { BunnyForm } from './bunny-form';
 
 const newCreatorSchema = z.object({
   name: z.string(),
@@ -115,6 +116,8 @@ export const NewCityFormNewCreator = () => {
           </Select.Popup>
         </Select>
       </Field>
+
+      <BunnyForm />
 
       <Button disabled={loading} type="submit">
         Post city

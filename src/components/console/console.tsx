@@ -41,9 +41,19 @@ export const Console = () => {
         <Dialog.Popup>
           <Tabs>
             <Tabs.List>
-              <Tabs.Tab value="new-creator">New creator</Tabs.Tab>
-              <Tabs.Tab value="existing-creator">Existing creator</Tabs.Tab>
-              <Tabs.Indicator />
+              <Tabs.Tab
+                value="new-creator"
+                className="data-[selected]:bg-white"
+              >
+                New creator
+              </Tabs.Tab>
+              <Tabs.Tab
+                value="existing-creator"
+                className="data-[selected]:bg-white"
+              >
+                Existing creator
+              </Tabs.Tab>
+              {/* <Tabs.Indicator /> bug: wrong initial size if used in dialog */}
             </Tabs.List>
             <Tabs.Panel value="new-creator">
               <NewCityFormNewCreator />

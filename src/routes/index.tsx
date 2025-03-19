@@ -1,3 +1,4 @@
+import { Tabs } from '@/primitives';
 import { supabase } from '@/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -24,6 +25,15 @@ function Index() {
         {getCities.isError && <div>Error loading cities</div>}
         {getCities.data?.map(city => <div key={city.id}>{city.name}</div>)}
       </div>
+      <Tabs defaultValue="new-creator">
+        <Tabs.List>
+          <Tabs.Tab value="new-creator">New creator</Tabs.Tab>
+          <Tabs.Tab value="existing-creator">Existing creator</Tabs.Tab>
+          <Tabs.Indicator />
+        </Tabs.List>
+        <Tabs.Panel value="new-creator">aaa</Tabs.Panel>
+        <Tabs.Panel value="existing-creator">bbb</Tabs.Panel>
+      </Tabs>
     </div>
   );
 }

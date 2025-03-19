@@ -27,7 +27,7 @@ const DialogPopup = forwardRef<HTMLDivElement, DialogPrimitive.Popup.Props>(
       <DialogPrimitive.Popup
         ref={ref}
         className={tw(
-          'fixed top-1/2 left-1/2 -mt-8 max-w-[calc(100vw-3rem)] -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-gray-50 p-6 text-gray-900 outline outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300',
+          'fixed top-1/2 left-1/2 -mt-8 max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-gray-50 p-6 text-gray-900 outline outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300',
           className
         )}
         {...props}

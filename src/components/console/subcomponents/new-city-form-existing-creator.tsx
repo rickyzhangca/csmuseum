@@ -3,6 +3,7 @@ import { useStore } from '@/store';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { z } from 'zod';
+import { BunnyForm } from './bunny-form';
 
 const existingCreatorSchema = z.object({
   name: z.string(),
@@ -94,6 +95,8 @@ export const NewCityFormExistingCreator = () => {
           </Select.Popup>
         </Select>
       </Field>
+
+      <BunnyForm />
 
       <Button disabled={loading} type="submit">
         Post city

@@ -30,7 +30,7 @@ const TabsTab = forwardRef<HTMLDivElement, TabsPrimitive.Tab.Props>(
     <TabsPrimitive.Tab
       ref={ref}
       className={tw(
-        'text flex h-10 items-center justify-center rounded-lg border-0 px-4 font-medium text-gray-500 outline-none select-none before:inset-x-0 before:inset-y-1 before:rounded-sm before:-outline-offset-1 before:outline-blue-800 hover:text-gray-800 focus-visible:relative focus-visible:before:absolute focus-visible:before:outline-2 data-[selected]:text-gray-900',
+        'text flex h-10 items-center justify-center rounded-lg border-0 px-4 font-medium text-gray-500 outline-none select-none before:inset-x-0 before:inset-y-1 before:rounded-sm before:-outline-offset-1 before:outline-blue-800 hover:text-gray-800 not-disabled:hover:cursor-pointer focus-visible:relative focus-visible:before:absolute focus-visible:before:outline-2 data-[selected]:text-gray-900',
         className
       )}
       {...props}

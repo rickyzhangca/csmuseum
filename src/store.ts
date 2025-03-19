@@ -11,11 +11,11 @@ interface StoreState {
   signOut: () => Promise<void>;
 }
 
+// Fix: Properly type the store with middleware
 export const useStore = create<StoreState>()(
   devtools(
     set => ({
       user: null,
-      isLoading: true,
       supabase,
       setUser: user => set({ user }),
       initialize: async () => {
