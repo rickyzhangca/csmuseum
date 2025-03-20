@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "biome lint --config-path=biome.json",
     "preview": "vite preview",
+    "up": "pnpm upgrade -L",
     "supa-types": "supabase gen types typescript --project-id \"iulvwgglkwuosiedwdhd\" --schema public > src/supabase/types.ts"
   },
   "dependencies": {
@@ -31,12 +32,13 @@
     "@redux-devtools/extension": "^3.3.0",
     "@tanstack/react-router-devtools": "^1.114.25",
     "@tanstack/router-plugin": "^1.114.25",
-    "@types/react": "^19.0.11",
+    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwind-scrollbar": "^4.0.1",
     "typescript": "~5.8.2",
     "vite": "^6.2.2"
   }

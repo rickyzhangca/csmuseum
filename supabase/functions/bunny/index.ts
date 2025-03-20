@@ -12,7 +12,6 @@ import { corsHeaders, handleCors } from '../_shared/cors.ts';
 const BUNNY_API_KEY = Deno.env.get('BUNNY_API_KEY') ?? '';
 const BUNNY_STORAGE_ZONE = Deno.env.get('BUNNY_STORAGE_ZONE') ?? '';
 const BUNNY_STORAGE_REGION = Deno.env.get('BUNNY_STORAGE_REGION') ?? '';
-const BUNNY_STORAGE_FOLDER = Deno.env.get('BUNNY_STORAGE_FOLDER') ?? '';
 
 // Supabase client setup
 const supabaseClient = createClient(
@@ -27,6 +26,7 @@ const supabaseClient = createClient(
 
 interface UploadRequestBody {
   base64Data: string;
+  destinationPath: string;
 }
 
 const getContentTypeAndExt = (
@@ -75,10 +75,22 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
-    const { base64Data }: UploadRequestBody = await req.json();
+    const { base64Data, destinationPath }: UploadRequestBody = await req.json();
 
     if (!base64Data) {
       throw new Error('Missing base64 data');
+    }
+
+    if (!destinationPath) {
+      throw new Error('Missing destination path');
+    }
+
+    // Sanitize the destination path to prevent directory traversal attacks
+    const sanitizedPath = destinationPath
+      .replace(/\.\.\/|\.\./g, '')
+      .replace(/^\/+/, '');
+    if (sanitizedPath !== destinationPath) {
+      throw new Error('Invalid destination path');
     }
 
     // Get content type and extension from base64 data
@@ -104,9 +116,12 @@ serve(async (req: Request) => {
     // Generate unique filename
     const uniqueFilename = generateUniqueFilename(extension);
 
+    // Combine the base storage folder with the provided destination path
+    const folderPath = `${sanitizedPath}`;
+
     // Upload to Bunny.net storage
     const response = await fetch(
-      `https://${BUNNY_STORAGE_REGION}.storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${BUNNY_STORAGE_FOLDER}/${uniqueFilename}`,
+      `https://${BUNNY_STORAGE_REGION}.storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${folderPath}/${uniqueFilename}`,
       {
         method: 'PUT',
         headers: {
@@ -121,7 +136,7 @@ serve(async (req: Request) => {
       throw new Error(`Bunny.net upload failed: ${response}`);
     }
 
-    const cdnUrl = `https://${BUNNY_STORAGE_ZONE}.b-cdn.net/${BUNNY_STORAGE_FOLDER}/${uniqueFilename}`;
+    const cdnUrl = `https://${BUNNY_STORAGE_ZONE}.b-cdn.net/${folderPath}/${uniqueFilename}`;
 
     return new Response(
       JSON.stringify({

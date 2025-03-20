@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { BunnyForm } from './bunny-form';
 
 const existingCreatorSchema = z.object({
+  id: z.string(),
   name: z.string(),
   outline: z.string(),
   'created-by-id': z.string(),
@@ -14,6 +15,8 @@ const existingCreatorSchema = z.object({
 export const NewCityFormExistingCreator = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [cityId, setCityId] = useState('');
+  const destinationPath = cityId ? `test/${cityId}` : '';
   const { supabase, user } = useStore.getState();
 
   if (!user) return;
@@ -45,6 +48,7 @@ export const NewCityFormExistingCreator = () => {
         if (!validate.success) {
           const formattedErrors = validate.error.format();
           const validationErrors = {
+            id: formattedErrors.id?._errors[0],
             name: formattedErrors.name?._errors[0],
             outline: formattedErrors.outline?._errors[0],
             'created-by-id': formattedErrors['created-by-id']?._errors[0],
@@ -55,6 +59,7 @@ export const NewCityFormExistingCreator = () => {
         }
 
         const createCity = await supabase.from('cities').insert({
+          id: validate.data.id,
           name: validate.data.name,
           outline: validate.data.outline,
           creator: validate.data['created-by-id'],
@@ -62,7 +67,7 @@ export const NewCityFormExistingCreator = () => {
         });
         if (createCity.error) {
           setErrors({
-            name: createCity.error.message,
+            id: createCity.error.message,
           });
           setLoading(false);
           return;
@@ -71,6 +76,15 @@ export const NewCityFormExistingCreator = () => {
         setLoading(false);
       }}
     >
+      <Field name="id">
+        <Field.Control
+          type="text"
+          placeholder="City ID"
+          required
+          onChange={e => setCityId(e.target.value)}
+        />
+        <Field.Error />
+      </Field>
       <Field name="name">
         <Field.Control type="text" placeholder="City name" required />
         <Field.Error />
@@ -96,7 +110,7 @@ export const NewCityFormExistingCreator = () => {
         </Select>
       </Field>
 
-      <BunnyForm />
+      <BunnyForm destinationPath={destinationPath} />
 
       <Button disabled={loading} type="submit">
         Post city

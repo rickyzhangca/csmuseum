@@ -1,6 +1,12 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["csmuseum", "subcomponents", "supa", "supabase"],
+  "cSpell.words": [
+    "csmuseum",
+    "nocompatible",
+    "subcomponents",
+    "supa",
+    "supabase"
+  ],
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
   },

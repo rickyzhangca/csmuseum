@@ -1,4 +1,11 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@plugin 'tailwind-scrollbar' {
+  /* biome-ignore lint/correctness/noUnknownProperty: https://adoxography.github.io/tailwind-scrollbar/getting-started#nocompatible */
+  nocompatible: true;
+  /* biome-ignore lint/correctness/noUnknownProperty: https://adoxography.github.io/tailwind-scrollbar/getting-started#preferredstrategy */
+  preferredstrategy: 'pseudoelements';
+}
 
 /* https://base-ui.com/react/overview/quick-start#set-up-portals*/
 #root {
