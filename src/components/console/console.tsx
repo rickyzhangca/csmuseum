@@ -1,11 +1,10 @@
-import { Button, Dialog, Tabs } from '@/primitives';
+import { Button, Dialog } from '@/primitives';
 import { useStore } from '@/store';
 import { canShowConsole } from '@/utils';
 import { PowerIcon } from 'lucide-react';
 import { useState } from 'react';
 import { AuthForm } from './subcomponents/auth-form';
-import { NewCityFormExistingCreator } from './subcomponents/new-city-form-existing-creator';
-import { NewCityFormNewCreator } from './subcomponents/new-city-form-new-creator';
+import { NewCityForm } from './subcomponents/new-city-form/new-city-form';
 
 export const Console = () => {
   const [isShowingConsole, setIsShowingConsole] = useState(false);
@@ -29,43 +28,18 @@ export const Console = () => {
       <Dialog onOpenChange={setIsShowingConsole} open={isShowingConsole}>
         <Dialog.Trigger
           render={() => (
-            <Button
-              variant="primary"
-              type="button"
-              onClick={() => setIsShowingConsole(true)}
-            >
+            <Button type="button" onClick={() => setIsShowingConsole(true)}>
               Post new city
             </Button>
           )}
         />
         <Dialog.Popup>
-          <Tabs>
-            <Tabs.List>
-              <Tabs.Tab
-                value="new-creator"
-                className="data-[selected]:bg-white"
-              >
-                New creator
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="existing-creator"
-                className="data-[selected]:bg-white"
-              >
-                Existing creator
-              </Tabs.Tab>
-              {/* <Tabs.Indicator /> bug: wrong initial size if used in dialog */}
-            </Tabs.List>
-            <Tabs.Panel value="new-creator">
-              <NewCityFormNewCreator />
-            </Tabs.Panel>
-            <Tabs.Panel value="existing-creator">
-              <NewCityFormExistingCreator />
-            </Tabs.Panel>
-          </Tabs>
+          <NewCityForm />
         </Dialog.Popup>
       </Dialog>
       <Button
         type="button"
+        variant="secondary"
         onClick={() => useStore.getState().signOut()}
         iconOnly
       >

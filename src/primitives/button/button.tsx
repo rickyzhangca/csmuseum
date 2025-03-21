@@ -11,7 +11,7 @@ export const Button = ({
   className,
   children,
   iconOnly = false,
-  variant = 'secondary',
+  variant = 'primary',
   ...props
 }: ButtonProps) => {
   return (

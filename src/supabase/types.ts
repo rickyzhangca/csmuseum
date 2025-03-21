@@ -13,31 +13,31 @@ export type Database = {
         Row: {
           created_at: string
           created_by_id: string | null
-          creator: number
-          id: number
+          id: string
           name: string
+          original_creator_id: number | null
           outline: string
         }
         Insert: {
           created_at?: string
           created_by_id?: string | null
-          creator: number
-          id?: number
+          id?: string
           name: string
+          original_creator_id?: number | null
           outline: string
         }
         Update: {
           created_at?: string
           created_by_id?: string | null
-          creator?: number
-          id?: number
+          id?: string
           name?: string
+          original_creator_id?: number | null
           outline?: string
         }
         Relationships: [
           {
-            foreignKeyName: "cities_creator_fkey"
-            columns: ["creator"]
+            foreignKeyName: "cities_original_creator_id_fkey"
+            columns: ["original_creator_id"]
             isOneToOne: false
             referencedRelation: "creators"
             referencedColumns: ["id"]

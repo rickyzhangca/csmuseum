@@ -1,19 +1,27 @@
 import { Button } from '@/primitives';
 import { useStore } from '@/store';
-import { tw } from '@/utils';
 import { type ChangeEvent, useRef, useState } from 'react';
 
-interface BunnyFormProps {
-  destinationPath: string;
-}
+type ShotsTabProps = {
+  cityId: string | null;
+};
 
-export const BunnyForm = ({ destinationPath }: BunnyFormProps) => {
+export const ShotsTab = ({ cityId }: ShotsTabProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { supabase } = useStore();
+
+  const destinationPath = `cities/${cityId}`;
+
+  if (!cityId)
+    return (
+      <div className="flex w-full items-center justify-center rounded-xl bg-red-100 p-4 text-red-600">
+        City ID missing
+      </div>
+    );
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Reset states
@@ -134,9 +142,9 @@ export const BunnyForm = ({ destinationPath }: BunnyFormProps) => {
   };
 
   return (
-    <div className={tw('mx-auto w-full rounded-xl border border-gray-200 p-4')}>
-      <div className={tw('space-y-4')}>
-        <div className={tw('flex flex-col gap-2')}>
+    <div className="mx-auto w-full rounded-xl border border-gray-200 p-4">
+      <div className="space-y-4">
+        <div className="flex flex-col gap-2">
           <input
             id="image-upload"
             ref={fileInputRef}
@@ -152,7 +160,9 @@ export const BunnyForm = ({ destinationPath }: BunnyFormProps) => {
         <Button
           type="button"
           onClick={handleUpload}
-          disabled={isUploading || selectedFiles.length === 0 || !destinationPath}
+          disabled={
+            isUploading || selectedFiles.length === 0 || !destinationPath
+          }
           className="w-full"
         >
           {isUploading
@@ -161,22 +171,14 @@ export const BunnyForm = ({ destinationPath }: BunnyFormProps) => {
         </Button>
 
         {error && (
-          <div
-            className={tw(
-              'rounded-md border border-red-300 bg-red-100 p-3 text-red-700'
-            )}
-          >
+          <div className="rounded-md border border-red-300 bg-red-100 p-3 text-red-700">
             {error}
           </div>
         )}
 
         {uploadedImageUrls.length > 0 && (
           <div className="flex flex-col gap-2">
-            <div
-              className={tw(
-                'rounded-md border border-green-300 bg-green-100 p-3 text-green-700'
-              )}
-            >
+            <div className="rounded-md border border-green-300 bg-green-100 p-3 text-green-700">
               {uploadedImageUrls.length === 1
                 ? 'Image uploaded successfully!'
                 : `${uploadedImageUrls.length} images uploaded successfully!`}
@@ -184,37 +186,32 @@ export const BunnyForm = ({ destinationPath }: BunnyFormProps) => {
 
             <div className="flex gap-2">
               {uploadedImageUrls.map((url, index) => (
-                <div key={url} className={tw('rounded-md border p-3')}>
-                  <p className={tw('mb-2 text-sm font-medium')}>
+                <div key={url} className="rounded-md border p-3">
+                  <p className="mb-2 text-sm font-medium">
                     Image {index + 1} URL:
                   </p>
-                  <div className={tw('flex items-center gap-2')}>
+                  <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={url}
                       readOnly
-                      className={tw(
-                        'flex-1 rounded-md border bg-gray-50 p-2 text-sm'
-                      )}
+                      className="flex-1 rounded-md border bg-gray-50 p-2 text-sm"
                     />
-                    <button
+                    <Button
+                      variant="secondary"
                       type="button"
                       onClick={() => navigator.clipboard.writeText(url)}
-                      className={tw(
-                        'rounded-md bg-gray-200 p-2 hover:bg-gray-300'
-                      )}
+                      className="rounded-md bg-gray-200 p-2 hover:bg-gray-300"
                     >
                       Copy
-                    </button>
+                    </Button>
                   </div>
-                  <div className={tw('mt-2')}>
-                    <p className={tw('mb-2 text-sm font-medium')}>Preview:</p>
+                  <div className="mt-2">
+                    <p className="mb-2 text-sm font-medium">Preview:</p>
                     <img
                       src={url}
                       alt={`Uploaded content ${index + 1}`}
-                      className={tw(
-                        'h-auto max-h-64 max-w-full rounded-md border'
-                      )}
+                      className="h-auto max-h-64 max-w-full rounded-md border"
                     />
                   </div>
                 </div>
