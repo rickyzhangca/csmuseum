@@ -1,6 +1,6 @@
 import { tw } from '@/utils';
 
-type ButtonVariant = 'primary' | 'secondary';
+type ButtonVariant = 'primary' | 'secondary' | 'destructive';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   iconOnly?: boolean;
@@ -20,7 +20,9 @@ export const Button = ({
         'flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full font-medium disabled:cursor-not-allowed disabled:opacity-50',
         variant === 'primary'
           ? 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
-          : 'bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-100',
+          : variant === 'destructive'
+            ? 'bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-100'
+            : 'bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-100',
         iconOnly ? 'p-3' : 'px-4 py-2.5',
         className
       )}

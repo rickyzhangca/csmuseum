@@ -34,7 +34,10 @@ export const NewCityForm = () => {
         />
       </Tabs.Panel>
       <Tabs.Panel value="creator">
-        <CreatorTab cityId={cityId} />
+        <CreatorTab
+          cityId={cityId}
+          onComplete={() => setSelectedTab('shots')}
+        />
       </Tabs.Panel>
       <Tabs.Panel value="shots">
         <ShotsTab cityId={cityId} />

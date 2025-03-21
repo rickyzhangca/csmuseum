@@ -25,7 +25,7 @@ export const Console = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <Dialog onOpenChange={setIsShowingConsole} open={isShowingConsole}>
+      <Dialog onOpenChange={undefined} open={isShowingConsole}>
         <Dialog.Trigger
           render={() => (
             <Button type="button" onClick={() => setIsShowingConsole(true)}>
@@ -33,8 +33,15 @@ export const Console = () => {
             </Button>
           )}
         />
-        <Dialog.Popup>
+        <Dialog.Popup className="flex flex-col gap-2">
           <NewCityForm />
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => setIsShowingConsole(false)}
+          >
+            Cancel
+          </Button>
         </Dialog.Popup>
       </Dialog>
       <Button

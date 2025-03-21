@@ -14,9 +14,10 @@ const newCreatorSchema = z.object({
 
 type NewCreatorFormProps = {
   cityId: string;
+  onComplete: () => void;
 };
 
-const NewCreatorForm = ({ cityId }: NewCreatorFormProps) => {
+const NewCreatorForm = ({ cityId, onComplete }: NewCreatorFormProps) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { supabase, user } = useStore.getState();
@@ -84,6 +85,7 @@ const NewCreatorForm = ({ cityId }: NewCreatorFormProps) => {
         }
 
         setLoading(false);
+        onComplete();
       }}
     >
       <Field name="creator-name">
@@ -120,9 +122,13 @@ const existingCreatorSchema = z.object({
 
 type ExistingCreatorFormProps = {
   cityId: string;
+  onComplete: () => void;
 };
 
-const ExistingCreatorForm = ({ cityId }: ExistingCreatorFormProps) => {
+const ExistingCreatorForm = ({
+  cityId,
+  onComplete,
+}: ExistingCreatorFormProps) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { supabase, user } = useStore.getState();
@@ -206,9 +212,10 @@ const ExistingCreatorForm = ({ cityId }: ExistingCreatorFormProps) => {
 
 type CreatorTabProps = {
   cityId: string | null;
+  onComplete: () => void;
 };
 
-export const CreatorTab = ({ cityId }: CreatorTabProps) => {
+export const CreatorTab = ({ cityId, onComplete }: CreatorTabProps) => {
   const [selectedCreator, setSelectedCreator] = useState<'new' | 'existing'>(
     'new'
   );
@@ -246,9 +253,9 @@ export const CreatorTab = ({ cityId }: CreatorTabProps) => {
         </RadioGroup>
       </div>
       {selectedCreator === 'new' ? (
-        <NewCreatorForm cityId={cityId} />
+        <NewCreatorForm cityId={cityId} onComplete={onComplete} />
       ) : (
-        <ExistingCreatorForm cityId={cityId} />
+        <ExistingCreatorForm cityId={cityId} onComplete={onComplete} />
       )}
     </div>
   );

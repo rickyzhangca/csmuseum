@@ -17,6 +17,7 @@ export type Database = {
           name: string
           original_creator_id: number | null
           outline: string
+          shots_count: number
         }
         Insert: {
           created_at?: string
@@ -25,6 +26,7 @@ export type Database = {
           name: string
           original_creator_id?: number | null
           outline: string
+          shots_count?: number
         }
         Update: {
           created_at?: string
@@ -33,6 +35,7 @@ export type Database = {
           name?: string
           original_creator_id?: number | null
           outline?: string
+          shots_count?: number
         }
         Relationships: [
           {

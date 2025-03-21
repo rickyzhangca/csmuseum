@@ -1,6 +1,12 @@
 import { Button } from '@/primitives';
 import { useStore } from '@/store';
-import { type ChangeEvent, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 type ShotsTabProps = {
   cityId: string | null;
@@ -8,6 +14,7 @@ type ShotsTabProps = {
 
 export const ShotsTab = ({ cityId }: ShotsTabProps) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [isUpdatingCount, setIsUpdatingCount] = useState(false);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -131,6 +138,11 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
         fileInputRef.current.value = '';
         setSelectedFiles([]);
       }
+
+      // If uploads were successful, update the shot count
+      if (uploadedUrls.length > 0) {
+        updateShotCount();
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred'
@@ -140,6 +152,56 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
       setIsUploading(false);
     }
   };
+
+  const updateShotCount = useCallback(async () => {
+    if (!cityId) return;
+
+    try {
+      setIsUpdatingCount(true);
+
+      // Get session token
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+
+      if (!token) {
+        console.error('Authentication required for updating shot count');
+        return;
+      }
+
+      // Call the Supabase Edge Function to count images and update the city
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bunny-count`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            folderPath: destinationPath,
+            cityId,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Failed to update shot count:', result.error);
+      }
+    } catch (err) {
+      console.error('Error updating shot count:', err);
+    } finally {
+      setIsUpdatingCount(false);
+    }
+  }, [cityId, supabase, destinationPath]);
+
+  // Update shot count when component mounts if we have a cityId
+  useEffect(() => {
+    if (cityId) {
+      updateShotCount();
+    }
+  }, [cityId, updateShotCount]);
 
   return (
     <div className="mx-auto w-full rounded-xl border border-gray-200 p-4">
@@ -182,6 +244,9 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
               {uploadedImageUrls.length === 1
                 ? 'Image uploaded successfully!'
                 : `${uploadedImageUrls.length} images uploaded successfully!`}
+              {isUpdatingCount && (
+                <div className="mt-1 text-sm">Updating shot count...</div>
+              )}
             </div>
 
             <div className="flex gap-2">

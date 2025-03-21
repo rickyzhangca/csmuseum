@@ -9,6 +9,7 @@
     "lint": "biome lint --config-path=biome.json",
     "preview": "vite preview",
     "up": "pnpm upgrade -L",
+    "supa-deploy": "supabase functions deploy",
     "supa-types": "supabase gen types typescript --project-id \"iulvwgglkwuosiedwdhd\" --schema public > src/supabase/types.ts"
   },
   "dependencies": {
