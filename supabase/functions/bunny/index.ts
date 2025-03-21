@@ -25,8 +25,9 @@ const supabaseClient = createClient(
 );
 
 interface UploadRequestBody {
-  base64Data: string;
+  base64Data: string[] | string;
   destinationPath: string;
+  fileIndex?: number; // Optional index for sequential numbering
 }
 
 const getContentTypeAndExt = (
@@ -45,9 +46,8 @@ const getContentTypeAndExt = (
   return { contentType, extension };
 };
 
-const generateUniqueFilename = (extension: string): string => {
-  const uuid = crypto.randomUUID();
-  return `${uuid}.${extension}`;
+const generateSequentialFilename = (index: number, extension: string): string => {
+  return `${index}.${extension}`;
 };
 
 // Add size limit constant (10MB in bytes)
@@ -75,11 +75,14 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
-    const { base64Data, destinationPath }: UploadRequestBody = await req.json();
+    const { base64Data, destinationPath, fileIndex }: UploadRequestBody = await req.json();
 
     if (!base64Data) {
       throw new Error('Missing base64 data');
     }
+    
+    // Convert single base64 string to array for consistent processing
+    const base64DataArray = Array.isArray(base64Data) ? base64Data : [base64Data];
 
     if (!destinationPath) {
       throw new Error('Missing destination path');
@@ -93,50 +96,62 @@ serve(async (req: Request) => {
       throw new Error('Invalid destination path');
     }
 
-    // Get content type and extension from base64 data
-    const { contentType, extension } = getContentTypeAndExt(base64Data);
-
-    // Validate content type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(contentType)) {
-      throw new Error('Invalid content type. Only images are allowed.');
-    }
-
-    // Remove data:image/xyz;base64, prefix
-    const cleanBase64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
-
-    // Convert base64 to binary
-    const binaryData = Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0));
-
-    // Check file size
-    if (binaryData.length > MAX_FILE_SIZE) {
-      throw new Error('File size exceeds limit of 10MB');
-    }
-
-    // Generate unique filename
-    const uniqueFilename = generateUniqueFilename(extension);
-
     // Combine the base storage folder with the provided destination path
     const folderPath = `${sanitizedPath}`;
+    
+    // Process each image with sequential numbering
+    const uploadResults = [];
+    
+    for (let i = 0; i < base64DataArray.length; i++) {
+      const currentBase64 = base64DataArray[i];
+      
+      // Get content type and extension from base64 data
+      const { contentType, extension } = getContentTypeAndExt(currentBase64);
 
-    // Upload to Bunny.net storage
-    const response = await fetch(
-      `https://${BUNNY_STORAGE_REGION}.storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${folderPath}/${uniqueFilename}`,
-      {
-        method: 'PUT',
-        headers: {
-          AccessKey: BUNNY_API_KEY,
-          'Content-Type': contentType,
-        },
-        body: binaryData,
+      // Validate content type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(contentType)) {
+        throw new Error(`Invalid content type for image ${i}. Only images are allowed.`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`Bunny.net upload failed: ${response}`);
+      // Remove data:image/xyz;base64, prefix
+      const cleanBase64 = currentBase64.replace(/^data:image\/\w+;base64,/, '');
+
+      // Convert base64 to binary
+      const binaryData = Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0));
+
+      // Check file size
+      if (binaryData.length > MAX_FILE_SIZE) {
+        throw new Error(`File size exceeds limit of 10MB for image ${i}`);
+      }
+
+      // Use provided fileIndex if available, otherwise use the array index
+      const index = fileIndex !== undefined ? fileIndex : i;
+      const sequentialFilename = generateSequentialFilename(index, extension);
+
+      // Upload to Bunny.net storage
+      const response = await fetch(
+        `https://${BUNNY_STORAGE_REGION}.storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${folderPath}/${sequentialFilename}`,
+        {
+          method: 'PUT',
+          headers: {
+            AccessKey: BUNNY_API_KEY,
+            'Content-Type': contentType,
+          },
+          body: binaryData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Bunny.net upload failed for image ${i}: ${response}`);
+      }
+
+      const cdnUrl = `https://${BUNNY_STORAGE_ZONE}.b-cdn.net/${folderPath}/${sequentialFilename}`;
+      uploadResults.push(cdnUrl);
     }
-
-    const cdnUrl = `https://${BUNNY_STORAGE_ZONE}.b-cdn.net/${folderPath}/${uniqueFilename}`;
+    
+    // For backward compatibility, if only one image was uploaded, return a single URL
+    const cdnUrl = uploadResults.length === 1 ? uploadResults[0] : uploadResults;
 
     return new Response(
       JSON.stringify({

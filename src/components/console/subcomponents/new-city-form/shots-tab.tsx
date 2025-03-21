@@ -93,7 +93,8 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
       const failedUploads: string[] = [];
 
       // Upload each file
-      for (const file of selectedFiles) {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
         try {
           // Convert file to base64
           const base64Data = await convertToBase64(file);
@@ -107,7 +108,7 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({ base64Data, destinationPath }),
+              body: JSON.stringify({ base64Data, destinationPath, fileIndex: i }),
             }
           );
 

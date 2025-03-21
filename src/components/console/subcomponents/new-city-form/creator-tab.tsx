@@ -186,6 +186,7 @@ const ExistingCreatorForm = ({
         }
 
         setLoading(false);
+        onComplete();
       }}
     >
       <Field>

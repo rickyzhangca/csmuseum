@@ -1,4 +1,4 @@
-import { Tabs } from '@/primitives';
+import { CityPreview } from '@/components';
 import { supabase } from '@/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -23,17 +23,8 @@ function Index() {
       <div className="flex flex-col gap-4">
         {getCities.isLoading && <div>Loading cities...</div>}
         {getCities.isError && <div>Error loading cities</div>}
-        {getCities.data?.map(city => <div key={city.id}>{city.name}</div>)}
+        {getCities.data?.map(city => <CityPreview key={city.id} city={city} />)}
       </div>
-      <Tabs defaultValue="new-creator">
-        <Tabs.List>
-          <Tabs.Tab value="new-creator">New creator</Tabs.Tab>
-          <Tabs.Tab value="existing-creator">Existing creator</Tabs.Tab>
-          <Tabs.Indicator />
-        </Tabs.List>
-        <Tabs.Panel value="new-creator">aaa</Tabs.Panel>
-        <Tabs.Panel value="existing-creator">bbb</Tabs.Panel>
-      </Tabs>
     </div>
   );
 }

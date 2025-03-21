@@ -5,7 +5,8 @@
     "nocompatible",
     "subcomponents",
     "supa",
-    "supabase"
+    "supabase",
+    "VITE"
   ],
   "files.readonlyInclude": {
     "**/routeTree.gen.ts": true
