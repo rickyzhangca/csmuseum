@@ -1,10 +1,11 @@
 import type {} from '@redux-devtools/extension';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { NuqsAdapter } from 'nuqs/adapters/react';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { routeTree } from './routeTree.gen';
 import { AuthProvider } from './providers/auth-provider';
+import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,9 @@ if (rootElement && !rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <RouterProvider router={router} />
+          <NuqsAdapter>
+            <RouterProvider router={router} />
+          </NuqsAdapter>
         </AuthProvider>
       </QueryClientProvider>
     </StrictMode>

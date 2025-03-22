@@ -1,6 +1,6 @@
 import { tw } from '@/utils';
 import { Select as SelectPrimitive } from '@base-ui-components/react/select';
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
+import { CaretUpDown, Check } from '@phosphor-icons/react';
 import { forwardRef } from 'react';
 
 const SelectRoot = SelectPrimitive.Root;
@@ -26,9 +26,7 @@ const SelectValue = SelectPrimitive.Value;
 const SelectIcon = forwardRef<HTMLDivElement, SelectPrimitive.Icon.Props>(
   ({ children, ...props }, ref) => (
     <SelectPrimitive.Icon ref={ref} {...props}>
-      {children || (
-        <ChevronsUpDownIcon className="size-4 min-w-4 text-gray-500" />
-      )}
+      {children || <CaretUpDown size={16} className="text-gray-500" />}
     </SelectPrimitive.Icon>
   )
 );
@@ -65,7 +63,7 @@ const SelectItem = forwardRef<HTMLDivElement, SelectPrimitive.Item.Props>(
       {...props}
     >
       <SelectPrimitive.ItemIndicator className="col-start-1">
-        <CheckIcon className="size-3 min-w-3" />
+        <Check size={12} weight="bold" />
       </SelectPrimitive.ItemIndicator>
       <SelectPrimitive.ItemText className="col-start-2">
         {children}

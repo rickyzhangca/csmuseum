@@ -1,26 +1,50 @@
 import type { Database } from '@/supabase';
+import { urlTypeNames } from '@/utils';
+import { User, YoutubeLogo } from '@phosphor-icons/react';
+import { Link } from '@tanstack/react-router';
+import { Embla } from './subcomponents/embla';
+import { Tag } from './subcomponents/tag';
 
 type CityPreviewProps = {
-  city: Database['public']['Tables']['cities']['Row'];
+  city: Database['public']['Views']['cities_with_creators']['Row'];
 };
 
 export const CityPreview = ({ city }: CityPreviewProps) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
-        {Array.from({ length: city.shots_count }).map((_, index) => (
-          <img
-            key={`${city.id}-${index}`}
-            src={`${import.meta.env.VITE_BUNNY_CDN_URL}/cities/${city.id}/${index}.webp`}
-            alt={city.name}
-            className="aspect-video h-[480px] rounded-xl object-cover"
-          />
-        ))}
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-lg font-bold">{city.name}</p>
-        <p className="text-gray-500">{city.outline}</p>
+  const Meta = () => (
+    <div className="flex items-center justify-between gap-2 px-6">
+      <div className="flex items-center gap-1.5">
+        <Tag>
+          <User size={16} weight="bold" />
+          {city.creator_name}
+        </Tag>
+        {city.city_source_url && city.city_source_url_type && (
+          <Tag to={city.city_source_url} target="_blank">
+            <YoutubeLogo size={16} weight="fill" />
+            {urlTypeNames[city.city_source_url_type]}
+          </Tag>
+        )}
       </div>
     </div>
+  );
+
+  const Shots = () => {
+    return <Embla city={city} />;
+  };
+
+  const Info = () => (
+    <div className="flex flex-col px-2">
+      <p className="text-lg font-medium">{city.city_name}</p>
+      <p className="text-sm text-gray-500">{city.city_outline}</p>
+    </div>
+  );
+
+  return (
+    <Link to={`${city.city_id}`} className="flex flex-col gap-3">
+      <div className="flex flex-col gap-6 rounded-2xl bg-gray-100 py-6">
+        <Meta />
+        <Shots />
+      </div>
+      <Info />
+    </Link>
   );
 };

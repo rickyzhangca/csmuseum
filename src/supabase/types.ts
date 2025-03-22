@@ -12,35 +12,48 @@ export type Database = {
       cities: {
         Row: {
           created_at: string
-          created_by_id: string | null
+          creator_id: number | null
           id: string
           name: string
-          original_creator_id: number | null
           outline: string
+          posted_by_id: string | null
           shots_count: number
+          source_url: string | null
+          source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Insert: {
           created_at?: string
-          created_by_id?: string | null
+          creator_id?: number | null
           id?: string
           name: string
-          original_creator_id?: number | null
           outline: string
+          posted_by_id?: string | null
           shots_count?: number
+          source_url?: string | null
+          source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Update: {
           created_at?: string
-          created_by_id?: string | null
+          creator_id?: number | null
           id?: string
           name?: string
-          original_creator_id?: number | null
           outline?: string
+          posted_by_id?: string | null
           shots_count?: number
+          source_url?: string | null
+          source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Relationships: [
           {
-            foreignKeyName: "cities_original_creator_id_fkey"
-            columns: ["original_creator_id"]
+            foreignKeyName: "cities_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "cities_with_creators"
+            referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "cities_creator_id_fkey"
+            columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "creators"
             referencedColumns: ["id"]
@@ -50,45 +63,85 @@ export type Database = {
       creators: {
         Row: {
           created_at: string
-          created_by_id: string | null
           id: number
           name: string
+          posted_by_id: string | null
           profile_url: string | null
-          profile_url_type:
-            | Database["public"]["Enums"]["PROFILE_URL_TYPE"]
-            | null
+          profile_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Insert: {
           created_at?: string
-          created_by_id?: string | null
           id?: number
           name: string
+          posted_by_id?: string | null
           profile_url?: string | null
-          profile_url_type?:
-            | Database["public"]["Enums"]["PROFILE_URL_TYPE"]
-            | null
+          profile_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Update: {
           created_at?: string
-          created_by_id?: string | null
           id?: number
           name?: string
+          posted_by_id?: string | null
           profile_url?: string | null
-          profile_url_type?:
-            | Database["public"]["Enums"]["PROFILE_URL_TYPE"]
-            | null
+          profile_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      cities_with_creators: {
+        Row: {
+          city_created_at: string | null
+          city_id: string | null
+          city_name: string | null
+          city_outline: string | null
+          city_posted_by_id: string | null
+          city_source_url: string | null
+          city_source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          creator_created_at: string | null
+          creator_id: number | null
+          creator_name: string | null
+          creator_posted_by_id: string | null
+          creator_profile_url: string | null
+          creator_profile_url_type:
+            | Database["public"]["Enums"]["URL_TYPE"]
+            | null
+          shots_count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_all_cities_with_creators: {
+        Args: Record<PropertyKey, never>
+        Returns: Json[]
+      }
+      get_city_with_creator: {
+        Args: {
+          city_id: string
+        }
+        Returns: Json
+      }
+      link_city_to_creator: {
+        Args: {
+          p_city_id: string
+          p_creator_id: number
+        }
+        Returns: Json
+      }
+      update_city_creator: {
+        Args: {
+          p_city_id: string
+          p_creator_name: string
+          p_creator_profile_url?: string
+          p_creator_profile_url_type?: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
-      PROFILE_URL_TYPE: "youtube" | "xiaohongshu" | "twitter"
+      URL_TYPE: "youtube" | "xiaohongshu" | "twitter"
     }
     CompositeTypes: {
       [_ in never]: never

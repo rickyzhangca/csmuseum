@@ -1,7 +1,7 @@
 import { Button, Dialog } from '@/primitives';
 import { useStore } from '@/store';
 import { canShowConsole } from '@/utils';
-import { PowerIcon } from 'lucide-react';
+import { Power } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { AuthForm } from './subcomponents/auth-form';
 import { NewCityForm } from './subcomponents/new-city-form/new-city-form';
@@ -50,7 +50,7 @@ export const Console = () => {
         onClick={() => useStore.getState().signOut()}
         iconOnly
       >
-        <PowerIcon className="size-5" />
+        <Power size={20} weight="bold" />
       </Button>
     </div>
   );
