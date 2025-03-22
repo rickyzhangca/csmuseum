@@ -25,7 +25,6 @@
     "embla-carousel-react": "^8.5.2",
     "nuqs": "^2.4.1",
     "react": "^19.0.0",
-    "react-compiler-runtime": "19.0.0-beta-3229e95-20250315",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.15",
