@@ -1,11 +1,6 @@
-import { tw } from '@/utils';
+import { blockInteractions, tw } from '@/utils';
 import { Link, type LinkProps } from '@tanstack/react-router';
-import {
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactNode,
-  useCallback,
-} from 'react';
+import type { ReactNode } from 'react';
 
 export const Tag = ({
   children,
@@ -16,14 +11,6 @@ export const Tag = ({
   to?: string;
   target?: LinkProps['target'];
 }) => {
-  const blockInteractions = useCallback(
-    (e: MouseEvent | KeyboardEvent) => {
-      if (to) e.stopPropagation();
-      else e.preventDefault();
-    },
-    [to]
-  );
-
   const Content = () => (
     <div
       className={tw(
@@ -31,8 +18,8 @@ export const Tag = ({
         to && 'hover:bg-gray-900/50',
         !to && 'cursor-default'
       )}
-      onClick={blockInteractions}
-      onKeyDown={blockInteractions}
+      onClick={e => blockInteractions(e, to ? 'stop' : 'prevent')}
+      onKeyDown={e => blockInteractions(e, to ? 'stop' : 'prevent')}
     >
       {children}
     </div>

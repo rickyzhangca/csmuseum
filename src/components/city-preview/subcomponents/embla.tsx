@@ -3,6 +3,7 @@ import { tw } from '@/utils';
 import type { EmblaCarouselType, EmblaEventType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { EmblaControls } from './embla-controls';
 import './embla.css';
 
 const TWEEN_FACTOR_BASE = 0.2;
@@ -53,7 +54,6 @@ const usePrevNextButtons = (
 type UseDotButtonType = {
   selectedIndex: number;
   scrollSnaps: number[];
-  onDotButtonClick: (index: number) => void;
 };
 
 const useDotButton = (
@@ -61,14 +61,6 @@ const useDotButton = (
 ): UseDotButtonType => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-  const onDotButtonClick = useCallback(
-    (index: number) => {
-      if (!emblaApi) return;
-      emblaApi.scrollTo(index);
-    },
-    [emblaApi]
-  );
 
   const onInit = useCallback((emblaApi: EmblaCarouselType) => {
     setScrollSnaps(emblaApi.scrollSnapList());
@@ -89,7 +81,6 @@ const useDotButton = (
   return {
     selectedIndex,
     scrollSnaps,
-    onDotButtonClick,
   };
 };
 
@@ -131,8 +122,10 @@ const LazyLoadImage = (props: { imgSrc: string; inView: boolean }) => {
 
 export const Embla = ({
   city,
+  selectedShotIndexChange,
 }: {
   city: Database['public']['Views']['cities_with_creators']['Row'];
+  selectedShotIndexChange: (index: number) => void;
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -191,8 +184,11 @@ export const Embla = ({
     []
   );
 
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
-    useDotButton(emblaApi);
+  const { selectedIndex } = useDotButton(emblaApi);
+
+  useEffect(() => {
+    selectedShotIndexChange(selectedIndex);
+  }, [selectedIndex, selectedShotIndexChange]);
 
   const {
     prevBtnDisabled,
@@ -236,7 +232,12 @@ export const Embla = ({
   ]);
 
   return (
-    <section className="embla">
+    <section className="embla relative">
+      <EmblaControls
+        type="prev"
+        hide={prevBtnDisabled}
+        onClick={onPrevButtonClick}
+      />
       <div className="embla__viewport" ref={emblaRef}>
         <div className="embla__container">
           {Array.from({ length: city.shots_count ?? 0 }).map((_, index) => (
@@ -248,39 +249,11 @@ export const Embla = ({
           ))}
         </div>
       </div>
-      <div className="embla__controls">
-        <div className="embla__buttons">
-          <button
-            type="button"
-            onClick={onPrevButtonClick}
-            disabled={prevBtnDisabled}
-          >
-            prev
-          </button>
-          <button
-            type="button"
-            onClick={onNextButtonClick}
-            disabled={nextBtnDisabled}
-          >
-            next
-          </button>
-        </div>
-
-        <div className="embla__dots">
-          {scrollSnaps.map((_, index) => (
-            <button
-              type="button"
-              key={`${city.city_id}-${index}`}
-              onClick={() => onDotButtonClick(index)}
-              className={'embla__dot'.concat(
-                index === selectedIndex ? 'embla__dot--selected' : ''
-              )}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      </div>
+      <EmblaControls
+        type="next"
+        hide={nextBtnDisabled}
+        onClick={onNextButtonClick}
+      />
     </section>
   );
 };
