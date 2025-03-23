@@ -6,15 +6,18 @@ import { useState } from 'react';
 import { Embla } from './subcomponents/embla';
 import { Tag } from './subcomponents/tag';
 
+const MAX_SHOTS_TO_SHOW = 4;
+
 type CityPreviewProps = {
   city: Database['public']['Views']['cities_with_creators']['Row'];
 };
 
 export const CityPreview = ({ city }: CityPreviewProps) => {
   const [selectedShotIndex, setSelectedShotIndex] = useState(0);
+  const shotsToShow = Math.min(city.shots_count ?? 0, MAX_SHOTS_TO_SHOW);
 
   const Meta = () => (
-    <div className="flex items-center justify-between gap-2 px-6">
+    <div className="flex items-center justify-between gap-2 px-5">
       <div className="flex items-center gap-1.5">
         <Tag>
           <User size={16} weight="bold" />
@@ -27,26 +30,37 @@ export const CityPreview = ({ city }: CityPreviewProps) => {
           </Tag>
         )}
       </div>
-      <div className="flex items-center gap-1.5 opacity-0 transition group-hover:opacity-100">
-        {Array.from({ length: city.shots_count ?? 0 }).map((_, index) => (
-          <div
-            key={`${city.city_id}-${index}`}
-            className={tw(
-              'h-2 w-2 rounded-full',
-              index === selectedShotIndex ? 'bg-gray-900' : 'bg-gray-300'
-            )}
-          />
-        ))}
+      <div className="flex items-center gap-3 opacity-0 transition group-hover:opacity-100">
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: shotsToShow }).map((_, index) => (
+            <div
+              key={`${city.city_id}-${index}`}
+              className={tw(
+                'h-2 w-2 rounded-full',
+                index === selectedShotIndex ? 'bg-gray-900' : 'bg-gray-300'
+              )}
+            />
+          ))}
+        </div>
+        {city.shots_count && city.shots_count > MAX_SHOTS_TO_SHOW && (
+          <Tag>+{city.shots_count - MAX_SHOTS_TO_SHOW}</Tag>
+        )}
       </div>
     </div>
   );
 
   const Shots = () => {
-    return <Embla city={city} selectedShotIndexChange={setSelectedShotIndex} />;
+    return (
+      <Embla
+        city={city}
+        shotsToShow={shotsToShow}
+        selectedShotIndexChange={setSelectedShotIndex}
+      />
+    );
   };
 
   const Info = () => (
-    <div className="flex flex-col px-2">
+    <div className="mx-5 mb-5 flex flex-col rounded-xl px-5 py-4 group-hover:bg-white">
       <p className="text-lg font-medium">{city.city_name}</p>
       <p className="text-sm text-gray-500">{city.city_outline}</p>
     </div>
@@ -54,11 +68,11 @@ export const CityPreview = ({ city }: CityPreviewProps) => {
 
   return (
     <Link to={`${city.city_id}`} className="flex flex-col gap-3">
-      <div className="group flex flex-col gap-6 rounded-2xl bg-gray-100 py-6">
+      <div className="group flex flex-col gap-5 overflow-hidden rounded-3xl bg-gray-900/4 pt-5 transition hover:bg-gray-900/6">
         <Meta />
         <Shots />
+        <Info />
       </div>
-      <Info />
     </Link>
   );
 };

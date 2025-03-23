@@ -1,12 +1,10 @@
 import type { Database } from '@/supabase';
 import { tw } from '@/utils';
-import type { EmblaCarouselType, EmblaEventType } from 'embla-carousel';
+import { Spinner } from '@phosphor-icons/react';
+import type { EmblaCarouselType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { EmblaControls } from './embla-controls';
-import './embla.css';
-
-const TWEEN_FACTOR_BASE = 0.2;
 
 type UsePrevNextButtonsType = {
   prevBtnDisabled: boolean;
@@ -87,8 +85,13 @@ const useDotButton = (
 const PLACEHOLDER_SRC =
   'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D';
 
-const LazyLoadImage = (props: { imgSrc: string; inView: boolean }) => {
-  const { imgSrc, inView } = props;
+type LazyLoadImageProps = {
+  imgSrc: string;
+  inView: boolean;
+  isLastItem: boolean;
+};
+
+const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const setLoaded = useCallback(() => {
@@ -96,25 +99,37 @@ const LazyLoadImage = (props: { imgSrc: string; inView: boolean }) => {
   }, [inView]);
 
   return (
-    <div className="embla__slide">
+    <div
+      className=""
+      style={{
+        flex: '0 0 auto',
+        minWidth: '0',
+        maxWidth: '90%',
+        paddingLeft: '20px',
+      }}
+    >
       <div
         className={tw(
-          'embla__lazy-load',
-          hasLoaded && 'embla__lazy-load--has-loaded'
+          'relative flex transition',
+          hasLoaded ? 'opacity-100' : 'opacity-0',
+          isLastItem && 'pr-5'
         )}
       >
-        <div className="embla__parallax">
-          <div className="embla__parallax__layer">
-            {!hasLoaded && <span className="embla__lazy-load__spinner" />}
-            <img
-              className="embla__slide__img embla__lazy-load__img"
-              onLoad={setLoaded}
-              src={inView ? imgSrc : PLACEHOLDER_SRC}
-              alt="Your alt text"
-              data-src={imgSrc}
-            />
+        {!hasLoaded && (
+          <div className="flex w-full items-center justify-center p-4">
+            <Spinner size={24} className="animate-spin text-gray-500" />
           </div>
-        </div>
+        )}
+        <img
+          onLoad={setLoaded}
+          src={inView ? imgSrc : PLACEHOLDER_SRC}
+          alt="Your alt text"
+          data-src={imgSrc}
+          className={tw(
+            'h-[480px] rounded-2xl object-cover transition',
+            hasLoaded ? 'opacity-100' : 'opacity-0'
+          )}
+        />
       </div>
     </div>
   );
@@ -123,66 +138,16 @@ const LazyLoadImage = (props: { imgSrc: string; inView: boolean }) => {
 export const Embla = ({
   city,
   selectedShotIndexChange,
+  shotsToShow,
 }: {
   city: Database['public']['Views']['cities_with_creators']['Row'];
   selectedShotIndexChange: (index: number) => void;
+  shotsToShow: number;
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     loop: false,
   });
-  const tweenFactor = useRef(0);
-  const tweenNodes = useRef<HTMLElement[]>([]);
-
-  const setTweenNodes = useCallback((emblaApi: EmblaCarouselType): void => {
-    tweenNodes.current = emblaApi.slideNodes().map(slideNode => {
-      return slideNode.querySelector('.embla__parallax__layer') as HTMLElement;
-    });
-  }, []);
-
-  const setTweenFactor = useCallback((emblaApi: EmblaCarouselType) => {
-    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length;
-  }, []);
-
-  const tweenParallax = useCallback(
-    (emblaApi: EmblaCarouselType, eventName?: EmblaEventType) => {
-      const engine = emblaApi.internalEngine();
-      const scrollProgress = emblaApi.scrollProgress();
-      const slidesInView = emblaApi.slidesInView();
-      const isScrollEvent = eventName === 'scroll';
-
-      emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
-        let diffToTarget = scrollSnap - scrollProgress;
-        const slidesInSnap = engine.slideRegistry[snapIndex];
-
-        for (const slideIndex of slidesInSnap) {
-          if (isScrollEvent && !slidesInView.includes(slideIndex)) continue;
-
-          if (engine.options.loop) {
-            for (const loopItem of engine.slideLooper.loopPoints) {
-              const target = loopItem.target();
-
-              if (slideIndex === loopItem.index && target !== 0) {
-                const sign = Math.sign(target);
-
-                if (sign === -1) {
-                  diffToTarget = scrollSnap - (1 + scrollProgress);
-                }
-                if (sign === 1) {
-                  diffToTarget = scrollSnap + (1 - scrollProgress);
-                }
-              }
-            }
-          }
-
-          const translate = diffToTarget * (-1 * tweenFactor.current) * 100;
-          const tweenNode = tweenNodes.current[slideIndex];
-          tweenNode.style.transform = `translateX(${translate}%)`;
-        }
-      });
-    },
-    []
-  );
 
   const { selectedIndex } = useDotButton(emblaApi);
 
@@ -217,34 +182,24 @@ export const Embla = ({
     updateSlidesInView(emblaApi);
     emblaApi
       .on('slidesInView', updateSlidesInView)
-      .on('reInit', updateSlidesInView)
-      .on('reInit', setTweenNodes)
-      .on('reInit', setTweenFactor)
-      .on('reInit', tweenParallax)
-      .on('scroll', tweenParallax)
-      .on('slideFocus', tweenParallax);
-  }, [
-    emblaApi,
-    tweenParallax,
-    updateSlidesInView,
-    setTweenNodes,
-    setTweenFactor,
-  ]);
+      .on('reInit', updateSlidesInView);
+  }, [emblaApi, updateSlidesInView]);
 
   return (
-    <section className="embla relative">
+    <section className="embla relative max-w-full">
       <EmblaControls
         type="prev"
         hide={prevBtnDisabled}
         onClick={onPrevButtonClick}
       />
-      <div className="embla__viewport" ref={emblaRef}>
-        <div className="embla__container">
-          {Array.from({ length: city.shots_count ?? 0 }).map((_, index) => (
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex touch-pan-y">
+          {Array.from({ length: shotsToShow }).map((_, index) => (
             <LazyLoadImage
               key={`${city.city_id}-${index}`}
               imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/cities/${city.city_id}/${index}.webp`}
               inView={slidesInView.indexOf(index) > -1}
+              isLastItem={index === shotsToShow - 1}
             />
           ))}
         </div>

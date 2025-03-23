@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-
+@import 'tw-animate-css';
 @plugin 'tailwind-scrollbar' {
   /* biome-ignore lint/correctness/noUnknownProperty: https://adoxography.github.io/tailwind-scrollbar/getting-started#nocompatible */
   nocompatible: true;
