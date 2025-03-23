@@ -137,6 +137,27 @@ export type Database = {
         }
         Relationships: []
       }
+      requests: {
+        Row: {
+          content: string
+          created_at: string
+          id: number
+          url: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: number
+          url: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: number
+          url?: string
+        }
+        Relationships: []
+      }
       shots: {
         Row: {
           created_at: string

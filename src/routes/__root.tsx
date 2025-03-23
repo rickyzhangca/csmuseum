@@ -2,6 +2,7 @@ import { Console, RequestCity } from '@/components';
 import { canShowConsole } from '@/utils';
 import { Navigate, Outlet, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { Toaster } from 'sonner';
 import logo from '/logo.svg';
 
 export const Route = createRootRoute({
@@ -19,6 +20,7 @@ export const Route = createRootRoute({
       <main className="mt-[86px] flex-1">
         <Outlet />
       </main>
+      <Toaster position="bottom-center" />
       <TanStackRouterDevtools />
     </div>
   ),

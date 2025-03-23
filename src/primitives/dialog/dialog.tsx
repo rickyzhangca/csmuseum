@@ -38,7 +38,18 @@ const DialogPopup = forwardRef<HTMLDivElement, DialogPrimitive.Popup.Props>(
 
 DialogPopup.displayName = 'DialogPopup';
 
-const DialogTitle = DialogPrimitive.Title;
+const DialogTitle = forwardRef<HTMLHeadingElement, DialogPrimitive.Title.Props>(
+  ({ className, ...props }, ref) => (
+    <DialogPrimitive.Title
+      ref={ref}
+      className={tw('text-lg font-semibold', className)}
+      {...props}
+    />
+  )
+);
+
+DialogTitle.displayName = 'DialogTitle';
+
 const DialogDescription = DialogPrimitive.Description;
 
 export const Dialog = Object.assign(DialogRoot, {
