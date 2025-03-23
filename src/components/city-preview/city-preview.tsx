@@ -1,3 +1,4 @@
+import { Button } from '@/primitives';
 import type { Database } from '@/supabase';
 import { tw, urlTypeNames } from '@/utils';
 import { User, YoutubeLogo } from '@phosphor-icons/react';
@@ -60,9 +61,19 @@ export const CityPreview = ({ city }: CityPreviewProps) => {
   };
 
   const Info = () => (
-    <div className="mx-5 mb-5 flex flex-col rounded-xl px-5 py-4 group-hover:bg-white">
-      <p className="text-lg font-medium">{city.city_name}</p>
-      <p className="text-sm text-gray-500">{city.city_outline}</p>
+    <div className="mx-5 mb-5 flex items-center justify-between rounded-xl px-5 py-3 transition group-hover:bg-white hover:shadow-2xs">
+      <div>
+        <p className="text-lg font-medium">{city.city_name}</p>
+        <p className="text-sm text-gray-500">{city.city_outline}</p>
+      </div>
+      <Link to={`${city.city_id}`}>
+        <Button
+          variant="outline"
+          className="opacity-0 transition group-hover:opacity-100"
+        >
+          Explore
+        </Button>
+      </Link>
     </div>
   );
 

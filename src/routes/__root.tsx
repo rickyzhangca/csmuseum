@@ -1,4 +1,4 @@
-import { Console } from '@/components';
+import { Console, RequestCity } from '@/components';
 import { canShowConsole } from '@/utils';
 import { Navigate, Outlet, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
@@ -8,9 +8,12 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <nav>
-        <div className="mx-auto max-w-8xl flex justify-between items-center py-5 px-16">
+        <div className="max-w-8xl mx-auto flex items-center justify-between px-16 py-5">
           <img src={logo} alt="Logo" className="h-8" />
-          {canShowConsole() && <Console />}
+          <div className="flex items-center gap-2">
+            <RequestCity />
+            {canShowConsole() && <Console />}
+          </div>
         </div>
       </nav>
       <Outlet />

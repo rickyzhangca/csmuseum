@@ -28,7 +28,11 @@ export const Console = () => {
       <Dialog onOpenChange={undefined} open={isShowingConsole}>
         <Dialog.Trigger
           render={() => (
-            <Button type="button" onClick={() => setIsShowingConsole(true)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsShowingConsole(true)}
+            >
               Post new city
             </Button>
           )}
@@ -40,13 +44,13 @@ export const Console = () => {
             variant="destructive"
             onClick={() => setIsShowingConsole(false)}
           >
-            Cancel
+            Quit
           </Button>
         </Dialog.Popup>
       </Dialog>
       <Button
         type="button"
-        variant="secondary"
+        variant="destructive"
         onClick={() => useStore.getState().signOut()}
         iconOnly
       >
