@@ -196,8 +196,8 @@ export const Embla = ({
         <div className="flex touch-pan-y">
           {Array.from({ length: shotsToShow }).map((_, index) => (
             <LazyLoadImage
-              key={`${city.city_id}-${index}`}
-              imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/cities/${city.city_id}/${index}.webp`}
+              key={`${city.id}-${index}`}
+              imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/cities/${city.id}/${index}.webp`}
               inView={slidesInView.indexOf(index) > -1}
               isLastItem={index === shotsToShow - 1}
             />

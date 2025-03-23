@@ -1,5 +1,6 @@
 import { Button, Field, Form, Radio, RadioGroup, Select } from '@/primitives';
 import { useStore } from '@/store';
+import type { ContentType } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -14,10 +15,15 @@ const newCreatorSchema = z.object({
 
 type NewCreatorFormProps = {
   cityId: string;
+  newContentType: ContentType;
   onComplete: () => void;
 };
 
-const NewCreatorForm = ({ cityId, onComplete }: NewCreatorFormProps) => {
+const NewCreatorForm = ({
+  cityId,
+  newContentType,
+  onComplete,
+}: NewCreatorFormProps) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { supabase, user } = useStore.getState();
@@ -70,15 +76,15 @@ const NewCreatorForm = ({ cityId, onComplete }: NewCreatorFormProps) => {
           return;
         }
 
-        const updateCity = await supabase
-          .from('cities')
+        const updateContent = await supabase
+          .from(newContentType)
           .update({
             original_creator_id: createCreator.data[0].id,
           })
           .eq('id', cityId);
-        if (updateCity.error) {
+        if (updateContent.error) {
           setErrors({
-            'creator-name': updateCity.error.message,
+            'creator-name': updateContent.error.message,
           });
           setLoading(false);
           return;
@@ -122,11 +128,13 @@ const existingCreatorSchema = z.object({
 
 type ExistingCreatorFormProps = {
   cityId: string;
+  newContentType: ContentType;
   onComplete: () => void;
 };
 
 const ExistingCreatorForm = ({
   cityId,
+  newContentType,
   onComplete,
 }: ExistingCreatorFormProps) => {
   const [errors, setErrors] = useState({});
@@ -171,15 +179,15 @@ const ExistingCreatorForm = ({
           return;
         }
 
-        const updateCity = await supabase
-          .from('cities')
+        const updateContent = await supabase
+          .from(newContentType)
           .update({
             original_creator_id: validate.data['creator-id'],
           })
           .eq('id', cityId);
-        if (updateCity.error) {
+        if (updateContent.error) {
           setErrors({
-            'creator-id': updateCity.error.message,
+            'creator-id': updateContent.error.message,
           });
           setLoading(false);
           return;
@@ -213,18 +221,23 @@ const ExistingCreatorForm = ({
 
 type CreatorTabProps = {
   cityId: string | null;
+  newContentType: ContentType | null;
   onComplete: () => void;
 };
 
-export const CreatorTab = ({ cityId, onComplete }: CreatorTabProps) => {
+export const CreatorTab = ({
+  cityId,
+  newContentType,
+  onComplete,
+}: CreatorTabProps) => {
   const [selectedCreator, setSelectedCreator] = useState<'new' | 'existing'>(
     'new'
   );
 
-  if (!cityId)
+  if (!cityId || !newContentType)
     return (
       <div className="flex w-full items-center justify-center rounded-xl bg-red-100 p-4 text-red-600">
-        City ID missing
+        City ID or new content type missing
       </div>
     );
 
@@ -254,9 +267,17 @@ export const CreatorTab = ({ cityId, onComplete }: CreatorTabProps) => {
         </RadioGroup>
       </div>
       {selectedCreator === 'new' ? (
-        <NewCreatorForm cityId={cityId} onComplete={onComplete} />
+        <NewCreatorForm
+          cityId={cityId}
+          newContentType={newContentType}
+          onComplete={onComplete}
+        />
       ) : (
-        <ExistingCreatorForm cityId={cityId} onComplete={onComplete} />
+        <ExistingCreatorForm
+          cityId={cityId}
+          newContentType={newContentType}
+          onComplete={onComplete}
+        />
       )}
     </div>
   );

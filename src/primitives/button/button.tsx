@@ -25,7 +25,7 @@ export const Button = ({
             : variant === 'destructive'
               ? 'bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-100'
               : variant === 'outline'
-                ? 'border-gray-300 bg-transparent text-gray-900 hover:bg-gray-200 active:bg-gray-100'
+                ? 'border-gray-200 bg-transparent text-gray-900 hover:bg-gray-100 active:bg-gray-200'
                 : '',
         iconOnly ? 'p-3' : 'px-4 py-2.5',
         className

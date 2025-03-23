@@ -6,19 +6,21 @@ import logo from '/logo.svg';
 
 export const Route = createRootRoute({
   component: () => (
-    <>
-      <nav>
-        <div className="max-w-8xl mx-auto flex items-center justify-between px-16 py-5">
+    <div className="flex min-h-screen flex-col">
+      <header className="fixed top-0 right-0 left-0 z-50 bg-white">
+        <div className="max-w-8xl mx-auto flex h-[86px] items-center justify-between px-16">
           <img src={logo} alt="Logo" className="h-8" />
           <div className="flex items-center gap-2">
             <RequestCity />
             {canShowConsole() && <Console />}
           </div>
         </div>
-      </nav>
-      <Outlet />
+      </header>
+      <main className="mt-[86px] flex-1">
+        <Outlet />
+      </main>
       <TanStackRouterDevtools />
-    </>
+    </div>
   ),
   notFoundComponent: () => <Navigate to="/" />,
 });

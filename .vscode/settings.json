@@ -4,9 +4,13 @@
     "csmuseum",
     "embla",
     "nocompatible",
+    "nuqs",
     "subcomponents",
     "supa",
     "supabase",
+    "titleize",
+    "uidotdev",
+    "usehooks",
     "VITE"
   ],
   "files.readonlyInclude": {

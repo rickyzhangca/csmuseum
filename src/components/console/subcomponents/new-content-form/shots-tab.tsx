@@ -1,18 +1,14 @@
 import { Button } from '@/primitives';
 import { useStore } from '@/store';
-import {
-  type ChangeEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import type { ContentType } from '@/types';
+import { type ChangeEvent, useCallback, useRef, useState } from 'react';
 
 type ShotsTabProps = {
+  newContentType: ContentType | null;
   cityId: string | null;
 };
 
-export const ShotsTab = ({ cityId }: ShotsTabProps) => {
+export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isUpdatingCount, setIsUpdatingCount] = useState(false);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
@@ -21,12 +17,12 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { supabase } = useStore();
 
-  const destinationPath = `cities/${cityId}`;
+  const destinationPath = `${newContentType}/${cityId}`;
 
-  if (!cityId)
+  if (!cityId || !newContentType)
     return (
       <div className="flex w-full items-center justify-center rounded-xl bg-red-100 p-4 text-red-600">
-        City ID missing
+        City ID or new content type missing
       </div>
     );
 
@@ -108,7 +104,11 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({ base64Data, destinationPath, fileIndex: i }),
+              body: JSON.stringify({
+                base64Data,
+                destinationPath,
+                fileIndex: i,
+              }),
             }
           );
 
@@ -155,12 +155,9 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
   };
 
   const updateShotCount = useCallback(async () => {
-    if (!cityId) return;
-
     try {
       setIsUpdatingCount(true);
 
-      // Get session token
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
 
@@ -169,8 +166,7 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
         return;
       }
 
-      // Call the Supabase Edge Function to count images and update the city
-      const response = await fetch(
+      const countResponse = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bunny-count`,
         {
           method: 'POST',
@@ -185,24 +181,26 @@ export const ShotsTab = ({ cityId }: ShotsTabProps) => {
         }
       );
 
-      const result = await response.json();
+      const countResult = await countResponse.json();
 
-      if (!response.ok) {
-        console.error('Failed to update shot count:', result.error);
+      if (!countResponse.ok) {
+        console.error('Failed to update shot count:', countResult.error);
+      }
+
+      const updateResponse = await supabase
+        .from(newContentType)
+        .update({ shots_count: countResult.count })
+        .eq('id', cityId);
+
+      if (!updateResponse.data) {
+        console.error('Failed to update shot count in database');
       }
     } catch (err) {
       console.error('Error updating shot count:', err);
     } finally {
       setIsUpdatingCount(false);
     }
-  }, [cityId, supabase, destinationPath]);
-
-  // Update shot count when component mounts if we have a cityId
-  useEffect(() => {
-    if (cityId) {
-      updateShotCount();
-    }
-  }, [cityId, updateShotCount]);
+  }, [cityId, supabase, destinationPath, newContentType]);
 
   return (
     <div className="mx-auto w-full rounded-xl border border-gray-200 p-4">

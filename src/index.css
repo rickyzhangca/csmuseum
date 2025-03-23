@@ -12,6 +12,10 @@
   isolation: isolate;
 }
 
+#root {
+  @apply overflow-x-hidden;
+}
+
 @theme {
   --breakpoint-3xl: 160rem;
   --spacing-8xl: 160rem;

@@ -4,7 +4,7 @@ import { canShowConsole } from '@/utils';
 import { Power } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { AuthForm } from './subcomponents/auth-form';
-import { NewCityForm } from './subcomponents/new-city-form/new-city-form';
+import { NewContentForm } from './subcomponents/new-content-form/new-content-form';
 
 export const Console = () => {
   const [isShowingConsole, setIsShowingConsole] = useState(false);
@@ -33,12 +33,12 @@ export const Console = () => {
               variant="secondary"
               onClick={() => setIsShowingConsole(true)}
             >
-              Post new city
+              Post new...
             </Button>
           )}
         />
         <Dialog.Popup className="flex flex-col gap-2">
-          <NewCityForm />
+          <NewContentForm />
           <Button
             type="button"
             variant="destructive"
