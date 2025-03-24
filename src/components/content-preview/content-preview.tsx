@@ -2,7 +2,7 @@ import { Button } from '@/primitives';
 import type { Database } from '@/supabase';
 import { type ContentType, urlTypeNames } from '@/types';
 import { tw } from '@/utils';
-import { User, YoutubeLogo } from '@phosphor-icons/react';
+import { GlobeSimple, User, XLogo, YoutubeLogo } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { Embla } from './subcomponents/embla';
@@ -55,7 +55,13 @@ export const ContentPreview = ({
         )}
         {content.source_url && content.source_url_type && (
           <Tag to={content.source_url} target="_blank">
-            <YoutubeLogo size={16} weight="fill" />
+            {content.source_url_type === 'youtube' ? (
+              <YoutubeLogo size={16} weight="fill" />
+            ) : content.source_url_type === 'twitter' ? (
+              <XLogo size={16} />
+            ) : (
+              <GlobeSimple size={16} />
+            )}
             {urlTypeNames[content.source_url_type]}
           </Tag>
         )}
