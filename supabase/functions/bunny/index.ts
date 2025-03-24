@@ -27,7 +27,6 @@ const supabaseClient = createClient(
 interface UploadRequestBody {
   base64Data: string[] | string;
   destinationPath: string;
-  fileIndex?: number; // Optional index for sequential numbering
 }
 
 const getContentTypeAndExt = (
@@ -46,8 +45,11 @@ const getContentTypeAndExt = (
   return { contentType, extension };
 };
 
-const generateSequentialFilename = (index: number, extension: string): string => {
-  return `${index}.${extension}`;
+// Generate a short UUID for filenames (first 8 characters of UUID v4)
+const generateShortUUID = (extension: string): string => {
+  const fullUUID = crypto.randomUUID();
+  const shortUUID = fullUUID.substring(0, 8); // First 8 chars for brevity
+  return `${shortUUID}.${extension}`;
 };
 
 // Add size limit constant (10MB in bytes)
@@ -75,14 +77,16 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
-    const { base64Data, destinationPath, fileIndex }: UploadRequestBody = await req.json();
+    const { base64Data, destinationPath }: UploadRequestBody = await req.json();
 
     if (!base64Data) {
       throw new Error('Missing base64 data');
     }
-    
+
     // Convert single base64 string to array for consistent processing
-    const base64DataArray = Array.isArray(base64Data) ? base64Data : [base64Data];
+    const base64DataArray = Array.isArray(base64Data)
+      ? base64Data
+      : [base64Data];
 
     if (!destinationPath) {
       throw new Error('Missing destination path');
@@ -98,40 +102,43 @@ serve(async (req: Request) => {
 
     // Combine the base storage folder with the provided destination path
     const folderPath = `${sanitizedPath}`;
-    
-    // Process each image with sequential numbering
+
+    // Process each image with UUID-based filenames
     const uploadResults = [];
-    
+
     for (let i = 0; i < base64DataArray.length; i++) {
       const currentBase64 = base64DataArray[i];
-      
+
       // Get content type and extension from base64 data
       const { contentType, extension } = getContentTypeAndExt(currentBase64);
 
       // Validate content type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(contentType)) {
-        throw new Error(`Invalid content type for image ${i}. Only images are allowed.`);
+        throw new Error(
+          `Invalid content type for image ${i}. Only images are allowed.`
+        );
       }
 
       // Remove data:image/xyz;base64, prefix
       const cleanBase64 = currentBase64.replace(/^data:image\/\w+;base64,/, '');
 
       // Convert base64 to binary
-      const binaryData = Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0));
+      const binaryData = Uint8Array.from(atob(cleanBase64), c =>
+        c.charCodeAt(0)
+      );
 
       // Check file size
       if (binaryData.length > MAX_FILE_SIZE) {
         throw new Error(`File size exceeds limit of 10MB for image ${i}`);
       }
 
-      // Use provided fileIndex if available, otherwise use the array index
-      const index = fileIndex !== undefined ? fileIndex : i;
-      const sequentialFilename = generateSequentialFilename(index, extension);
+      // Generate a short UUID for the filename
+      const filename = generateShortUUID(extension);
 
       // Upload to Bunny.net storage
       const response = await fetch(
-        `https://${BUNNY_STORAGE_REGION}.storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${folderPath}/${sequentialFilename}`,
+        `https://${BUNNY_STORAGE_REGION}.storage.bunnycdn.com/${BUNNY_STORAGE_ZONE}/${folderPath}/${filename}`,
         {
           method: 'PUT',
           headers: {
@@ -146,17 +153,14 @@ serve(async (req: Request) => {
         throw new Error(`Bunny.net upload failed for image ${i}: ${response}`);
       }
 
-      const cdnUrl = `https://${BUNNY_STORAGE_ZONE}.b-cdn.net/${folderPath}/${sequentialFilename}`;
+      const cdnUrl = `https://${BUNNY_STORAGE_ZONE}.b-cdn.net/${folderPath}/${filename}`;
       uploadResults.push(cdnUrl);
     }
-    
-    // For backward compatibility, if only one image was uploaded, return a single URL
-    const cdnUrl = uploadResults.length === 1 ? uploadResults[0] : uploadResults;
 
     return new Response(
       JSON.stringify({
         success: true,
-        url: cdnUrl,
+        url: uploadResults,
       }),
       {
         headers: {

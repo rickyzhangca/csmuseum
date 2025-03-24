@@ -1,6 +1,7 @@
 import { Button } from '@/primitives';
 import type { Database } from '@/supabase';
-import { tw, urlTypeNames } from '@/utils';
+import { type ContentType, urlTypeNames } from '@/types';
+import { tw } from '@/utils';
 import { User, YoutubeLogo } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
@@ -9,19 +10,39 @@ import { Tag } from './subcomponents/tag';
 
 const MAX_SHOTS_TO_SHOW = 4;
 
-type ContentPreviewProps = {
-  content:
-    | Database['public']['Views']['cities_with_creators']['Row']
-    | Database['public']['Views']['shots_with_creators']['Row']
-    | Database['public']['Views']['assets_with_creators']['Row'];
+const routeConfig = {
+  cities: {
+    path: '/city/$cityId' as const,
+    getParams: (id: string) => ({ cityId: id }),
+  },
+  shots: {
+    path: '/shot/$shotId' as const,
+    getParams: (id: string) => ({ shotId: id }),
+  },
+  assets: {
+    path: '/asset/$assetId' as const,
+    getParams: (id: string) => ({ assetId: id }),
+  },
 };
 
-export const ContentPreview = ({ content }: ContentPreviewProps) => {
+type ContentPreviewProps = {
+  content:
+    | Database['public']['Views']['cities_details']['Row']
+    | Database['public']['Views']['shots_details']['Row']
+    | Database['public']['Views']['assets_details']['Row'];
+  contentType: ContentType;
+};
+
+export const ContentPreview = ({
+  content,
+  contentType,
+}: ContentPreviewProps) => {
   const [selectedShotIndex, setSelectedShotIndex] = useState(0);
+  const routeInfo = routeConfig[contentType];
 
-  if (!content.shots_count || content.shots_count === 0) return null;
+  if (!content.image_ids || content.image_ids.length === 0) return null;
 
-  const shotsToShow = Math.min(content.shots_count, MAX_SHOTS_TO_SHOW);
+  const shotsToShow = Math.min(content.image_ids.length, MAX_SHOTS_TO_SHOW);
 
   const Meta = () => (
     <div className="flex items-center justify-between gap-2 px-5">
@@ -51,11 +72,13 @@ export const ContentPreview = ({ content }: ContentPreviewProps) => {
             />
           ))}
         </div>
-        {content.shots_count && content.shots_count > MAX_SHOTS_TO_SHOW && (
-          <Tag to={`/city/${content.id}`}>
-            +{content.shots_count - MAX_SHOTS_TO_SHOW}
-          </Tag>
-        )}
+        {content.image_ids &&
+          content.image_ids.length > MAX_SHOTS_TO_SHOW &&
+          content.id && (
+            <Tag to={`/${contentType}/${content.id}`}>
+              +{content.image_ids.length - MAX_SHOTS_TO_SHOW}
+            </Tag>
+          )}
       </div>
     </div>
   );
@@ -63,7 +86,8 @@ export const ContentPreview = ({ content }: ContentPreviewProps) => {
   const Shots = () => {
     return (
       <Embla
-        city={content}
+        content={content}
+        contentType={contentType}
         shotsToShow={shotsToShow}
         selectedShotIndexChange={setSelectedShotIndex}
       />
@@ -78,7 +102,7 @@ export const ContentPreview = ({ content }: ContentPreviewProps) => {
             <p className="text-lg font-medium">{content.name}</p>
             <p className="text-sm text-gray-500">{content.outline}</p>
           </div>
-          <Link to="/city/$cityId" params={{ cityId: content.id }}>
+          <Link to={routeInfo.path} params={routeInfo.getParams(content.id)}>
             <Button
               variant="outline"
               className="opacity-0 transition group-hover:opacity-100"
@@ -95,8 +119,8 @@ export const ContentPreview = ({ content }: ContentPreviewProps) => {
     <>
       {content.id && (
         <Link
-          to="/city/$cityId"
-          params={{ cityId: content.id }}
+          to={routeInfo.path}
+          params={routeInfo.getParams(content.id)}
           className="flex flex-col gap-3"
         >
           <div className="group flex flex-col gap-5 overflow-hidden rounded-3xl bg-gray-900/4 pt-5 transition hover:bg-gray-900/6">

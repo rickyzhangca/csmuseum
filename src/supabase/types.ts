@@ -12,70 +12,129 @@ export type Database = {
       assets: {
         Row: {
           created_at: string
-          creator_id: number | null
+          creator_id: string | null
           id: string
           name: string
           outline: string
           posted_by_id: string | null
-          shots_count: number
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Insert: {
           created_at?: string
-          creator_id?: number | null
+          creator_id?: string | null
           id?: string
           name: string
           outline: string
           posted_by_id?: string | null
-          shots_count?: number
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Update: {
           created_at?: string
-          creator_id?: number | null
+          creator_id?: string | null
           id?: string
           name?: string
           outline?: string
           posted_by_id?: string | null
-          shots_count?: number
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "assets_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "assets_details"
+            referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "assets_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "cities_details"
+            referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "assets_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "shots_details"
+            referencedColumns: ["creator_id"]
+          },
+        ]
+      }
+      assets_images: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          posted_by: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id: string
+          posted_by?: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          posted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_images_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_images_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "assets_details"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cities: {
         Row: {
           created_at: string
-          creator_id: number | null
+          creator_id: string | null
           id: string
           name: string
           outline: string
           posted_by_id: string | null
-          shots_count: number
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Insert: {
           created_at?: string
-          creator_id?: number | null
+          creator_id?: string | null
           id?: string
           name: string
           outline: string
           posted_by_id?: string | null
-          shots_count?: number
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Update: {
           created_at?: string
-          creator_id?: number | null
+          creator_id?: string | null
           id?: string
           name?: string
           outline?: string
           posted_by_id?: string | null
-          shots_count?: number
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
@@ -84,14 +143,14 @@ export type Database = {
             foreignKeyName: "cities_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "assets_with_creators"
+            referencedRelation: "assets_details"
             referencedColumns: ["creator_id"]
           },
           {
             foreignKeyName: "cities_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "cities_with_creators"
+            referencedRelation: "cities_details"
             referencedColumns: ["creator_id"]
           },
           {
@@ -105,33 +164,69 @@ export type Database = {
             foreignKeyName: "cities_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "shots_with_creators"
+            referencedRelation: "shots_details"
             referencedColumns: ["creator_id"]
+          },
+        ]
+      }
+      cities_images: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          posted_by: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id: string
+          posted_by?: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          posted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_images_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cities_images_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "cities_details"
+            referencedColumns: ["id"]
           },
         ]
       }
       creators: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string
-          posted_by_id: string | null
+          posted_by_id: string
           profile_url: string | null
           profile_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Insert: {
           created_at?: string
-          id?: number
+          id: string
           name: string
-          posted_by_id?: string | null
+          posted_by_id: string
           profile_url?: string | null
           profile_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string
-          posted_by_id?: string | null
+          posted_by_id?: string
           profile_url?: string | null
           profile_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
@@ -161,34 +256,31 @@ export type Database = {
       shots: {
         Row: {
           created_at: string
-          creator_id: number | null
+          creator_id: string | null
           id: string
           name: string
           outline: string
           posted_by_id: string | null
-          shots_count: number
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Insert: {
           created_at?: string
-          creator_id?: number | null
+          creator_id?: string | null
           id?: string
           name: string
           outline: string
           posted_by_id?: string | null
-          shots_count?: number
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Update: {
           created_at?: string
-          creator_id?: number | null
+          creator_id?: string | null
           id?: string
           name?: string
           outline?: string
           posted_by_id?: string | null
-          shots_count?: number
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
         }
@@ -197,14 +289,14 @@ export type Database = {
             foreignKeyName: "shots_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "assets_with_creators"
+            referencedRelation: "assets_details"
             referencedColumns: ["creator_id"]
           },
           {
             foreignKeyName: "shots_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "cities_with_creators"
+            referencedRelation: "cities_details"
             referencedColumns: ["creator_id"]
           },
           {
@@ -218,18 +310,54 @@ export type Database = {
             foreignKeyName: "shots_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
-            referencedRelation: "shots_with_creators"
+            referencedRelation: "shots_details"
             referencedColumns: ["creator_id"]
+          },
+        ]
+      }
+      shots_images: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          posted_by: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id: string
+          posted_by?: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          posted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shots_images_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shots_images_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "shots_details"
+            referencedColumns: ["id"]
           },
         ]
       }
     }
     Views: {
-      assets_with_creators: {
+      assets_details: {
         Row: {
           created_at: string | null
           creator_created_at: string | null
-          creator_id: number | null
+          creator_id: string | null
           creator_name: string | null
           creator_posted_by_id: string | null
           creator_profile_url: string | null
@@ -237,20 +365,20 @@ export type Database = {
             | Database["public"]["Enums"]["URL_TYPE"]
             | null
           id: string | null
+          image_ids: string[] | null
           name: string | null
           outline: string | null
           posted_by_id: string | null
-          shots_count: number | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Relationships: []
       }
-      cities_with_creators: {
+      cities_details: {
         Row: {
           created_at: string | null
           creator_created_at: string | null
-          creator_id: number | null
+          creator_id: string | null
           creator_name: string | null
           creator_posted_by_id: string | null
           creator_profile_url: string | null
@@ -258,20 +386,20 @@ export type Database = {
             | Database["public"]["Enums"]["URL_TYPE"]
             | null
           id: string | null
+          image_ids: string[] | null
           name: string | null
           outline: string | null
           posted_by_id: string | null
-          shots_count: number | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }
         Relationships: []
       }
-      shots_with_creators: {
+      shots_details: {
         Row: {
           created_at: string | null
           creator_created_at: string | null
-          creator_id: number | null
+          creator_id: string | null
           creator_name: string | null
           creator_posted_by_id: string | null
           creator_profile_url: string | null
@@ -279,10 +407,10 @@ export type Database = {
             | Database["public"]["Enums"]["URL_TYPE"]
             | null
           id: string | null
+          image_ids: string[] | null
           name: string | null
           outline: string | null
           posted_by_id: string | null
-          shots_count: number | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
         }

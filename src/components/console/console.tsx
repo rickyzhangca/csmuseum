@@ -33,7 +33,7 @@ export const Console = () => {
               variant="secondary"
               onClick={() => setIsShowingConsole(true)}
             >
-              Post new...
+              Add a content (Admin)
             </Button>
           )}
         />

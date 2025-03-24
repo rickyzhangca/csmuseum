@@ -21,9 +21,7 @@ function Index() {
   const getCities = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cities_with_creators')
-        .select('*');
+      const { data, error } = await supabase.from('cities_details').select('*');
       if (error) throw error;
       return data;
     },
@@ -33,9 +31,7 @@ function Index() {
   const getShots = useQuery({
     queryKey: ['shots'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('shots_with_creators')
-        .select('*');
+      const { data, error } = await supabase.from('shots_details').select('*');
       if (error) throw error;
       return data;
     },
@@ -45,9 +41,7 @@ function Index() {
   const getAssets = useQuery({
     queryKey: ['assets'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('assets_with_creators')
-        .select('*');
+      const { data, error } = await supabase.from('assets_details').select('*');
       if (error) throw error;
       return data;
     },
@@ -88,7 +82,11 @@ function Index() {
             {getCities.isLoading && <div>Loading cities...</div>}
             {getCities.isError && <div>Error loading cities</div>}
             {getCities.data?.map(city => (
-              <ContentPreview key={city.id} content={city} />
+              <ContentPreview
+                key={city.id}
+                content={city}
+                contentType="cities"
+              />
             ))}
           </div>
         </Tabs.Panel>
@@ -97,7 +95,11 @@ function Index() {
             {getShots.isLoading && <div>Loading shots...</div>}
             {getShots.isError && <div>Error loading shots</div>}
             {getShots.data?.map(shot => (
-              <ContentPreview key={shot.id} content={shot} />
+              <ContentPreview
+                key={shot.id}
+                content={shot}
+                contentType="shots"
+              />
             ))}
           </div>
         </Tabs.Panel>
@@ -106,7 +108,11 @@ function Index() {
             {getAssets.isLoading && <div>Loading assets...</div>}
             {getAssets.isError && <div>Error loading assets</div>}
             {getAssets.data?.map(asset => (
-              <ContentPreview key={asset.id} content={asset} />
+              <ContentPreview
+                key={asset.id}
+                content={asset}
+                contentType="assets"
+              />
             ))}
           </div>
         </Tabs.Panel>

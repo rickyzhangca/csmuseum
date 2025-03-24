@@ -1,7 +1,7 @@
 import { Button } from '@/primitives';
 import { useStore } from '@/store';
 import type { ContentType } from '@/types';
-import { type ChangeEvent, useCallback, useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState } from 'react';
 
 type ShotsTabProps = {
   newContentType: ContentType | null;
@@ -10,7 +10,6 @@ type ShotsTabProps = {
 
 export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
   const [isUploading, setIsUploading] = useState(false);
-  const [isUpdatingCount, setIsUpdatingCount] = useState(false);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -107,7 +106,6 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
               body: JSON.stringify({
                 base64Data,
                 destinationPath,
-                fileIndex: i,
               }),
             }
           );
@@ -118,8 +116,11 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
             throw new Error(result.error || 'Upload failed');
           }
 
+          // Get the URL from the result (should be an array now with our new UUID-based approach)
+          const url = Array.isArray(result.url) ? result.url[0] : result.url;
+
           // Add URL to successful uploads
-          uploadedUrls.push(result.url);
+          uploadedUrls.push(url);
         } catch (error) {
           failedUploads.push(file.name);
           console.error(`Error uploading ${file.name}:`, error);
@@ -139,10 +140,8 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
         fileInputRef.current.value = '';
         setSelectedFiles([]);
       }
-
-      // If uploads were successful, update the shot count
       if (uploadedUrls.length > 0) {
-        updateShotCount();
+        await saveImageIdsToSupabase(uploadedUrls);
       }
     } catch (err) {
       setError(
@@ -154,53 +153,48 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
     }
   };
 
-  const updateShotCount = useCallback(async () => {
+  // Extract image ID from URL
+  const extractImageIdFromUrl = (url: string): string => {
+    // URL format: https://storage-zone.b-cdn.net/content-type/id/short-uuid.ext
+    const urlParts = url.split('/');
+    const filename = urlParts[urlParts.length - 1]; // Get the filename
+    const imageId = filename.split('.')[0]; // Remove the extension
+    return imageId;
+  };
+
+  // Save image IDs to the appropriate Supabase table
+  const saveImageIdsToSupabase = async (urls: string[]) => {
     try {
-      setIsUpdatingCount(true);
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
 
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData.session?.access_token;
-
-      if (!token) {
-        console.error('Authentication required for updating shot count');
+      if (!userId) {
+        console.error('User ID not found');
         return;
       }
 
-      const countResponse = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bunny-count`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            folderPath: destinationPath,
-            cityId,
-          }),
-        }
-      );
+      // Determine which table to use based on content type
+      const tableName = `${newContentType}_images`;
 
-      const countResult = await countResponse.json();
+      // Prepare image data for insertion
+      const imageData = urls.map(url => ({
+        content_id: cityId as string,
+        id: extractImageIdFromUrl(url),
+        posted_by: userId,
+      }));
 
-      if (!countResponse.ok) {
-        console.error('Failed to update shot count:', countResult.error);
+      // Insert image metadata into Supabase
+      const { error } = await supabase.from(tableName).insert(imageData);
+
+      if (error) {
+        console.error('Error saving image IDs to Supabase:', error);
+      } else {
+        console.log(`Saved ${imageData.length} image IDs to ${tableName}`);
       }
-
-      const updateResponse = await supabase
-        .from(newContentType)
-        .update({ shots_count: countResult.count })
-        .eq('id', cityId);
-
-      if (!updateResponse.data) {
-        console.error('Failed to update shot count in database');
-      }
-    } catch (err) {
-      console.error('Error updating shot count:', err);
-    } finally {
-      setIsUpdatingCount(false);
+    } catch (error) {
+      console.error('Error in saveImageIdsToSupabase:', error);
     }
-  }, [cityId, supabase, destinationPath, newContentType]);
+  };
 
   return (
     <div className="mx-auto w-full rounded-xl border border-gray-200 p-4">
@@ -243,9 +237,6 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
               {uploadedImageUrls.length === 1
                 ? 'Image uploaded successfully!'
                 : `${uploadedImageUrls.length} images uploaded successfully!`}
-              {isUpdatingCount && (
-                <div className="mt-1 text-sm">Updating shot count...</div>
-              )}
             </div>
 
             <div className="flex gap-2">

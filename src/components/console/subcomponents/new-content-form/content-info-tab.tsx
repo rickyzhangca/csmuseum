@@ -1,14 +1,21 @@
-import { Button, Field, Form, Radio, RadioGroup } from '@/primitives';
+import { Button, Field, Form, Radio, RadioGroup, Select } from '@/primitives';
 import { useStore } from '@/store';
-import { CONTENT_TYPES, type ContentType } from '@/types';
-import { useState } from 'react';
+import { CONTENT_TYPES, type ContentType, URL_TYPE } from '@/types';
+import { useEffect, useState } from 'react';
 import { z } from 'zod';
+
+const computeId = (name: string) =>
+  name
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase();
 
 const newCitySchema = z.object({
   type: z.enum(CONTENT_TYPES),
-  id: z.string(),
   name: z.string(),
   outline: z.string(),
+  source_url: z.string().url().optional(),
+  source_url_type: z.enum(URL_TYPE).optional(),
 });
 
 type ContentInfoTabProps = {
@@ -19,6 +26,13 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { supabase, user } = useStore.getState();
+
+  const [nameInput, setNameInput] = useState('');
+  const [computedId, setComputedId] = useState('');
+
+  useEffect(() => {
+    setComputedId(computeId(nameInput));
+  }, [nameInput]);
 
   if (!user) return;
 
@@ -38,9 +52,10 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
         if (!validate.success) {
           const formattedErrors = validate.error.format();
           const validationErrors = {
-            id: formattedErrors.id?._errors[0],
             name: formattedErrors.name?._errors[0],
             outline: formattedErrors.outline?._errors[0],
+            source_url: formattedErrors.source_url?._errors[0],
+            source_url_type: formattedErrors.source_url_type?._errors[0],
           };
           setErrors(validationErrors);
           setLoading(false);
@@ -48,21 +63,23 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
         }
 
         const createContent = await supabase.from(validate.data.type).insert({
-          id: validate.data.id,
+          id: computedId,
           name: validate.data.name,
           outline: validate.data.outline,
-          created_by_id: user.id,
+          source_url: validate.data.source_url,
+          source_url_type: validate.data.source_url_type,
+          posted_by_id: user.id,
         });
 
         if (createContent.error) {
           setErrors({
-            id: createContent.error.message,
+            name: createContent.error.message,
           });
           setLoading(false);
           return;
         }
         setLoading(false);
-        onComplete(validate.data.id, validate.data.type);
+        onComplete(computedId, validate.data.type);
       }}
     >
       <Field>
@@ -95,16 +112,41 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
         </div>
         <Field.Error />
       </Field>
-      <Field name="id">
-        <Field.Control type="text" placeholder="Content ID" required />
-        <Field.Error />
-      </Field>
       <Field name="name">
-        <Field.Control type="text" placeholder="Content name" required />
+        <Field.Control
+          type="text"
+          placeholder="Content name"
+          required
+          onChange={e => setNameInput(e.target.value)}
+        />
         <Field.Error />
       </Field>
+      <div className="flex flex-col rounded-xl border border-gray-200 bg-gray-100 px-4 py-2">
+        <p className="text-sm text-gray-400">Computed ID</p>
+        <p>{computedId}</p>
+      </div>
       <Field name="outline">
         <Field.Control type="text" placeholder="Content outline" required />
+        <Field.Error />
+      </Field>
+      <Field name="source_url">
+        <Field.Control type="text" placeholder="Source URL" />
+        <Field.Error />
+      </Field>
+      <Field>
+        <Select name="source_url_type" defaultValue="youtube">
+          <Select.Trigger>
+            <Select.Value />
+            <Select.Icon />
+          </Select.Trigger>
+          <Select.Popup>
+            {URL_TYPE.map(type => (
+              <Select.Item key={type} value={type}>
+                {type}
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select>
         <Field.Error />
       </Field>
 

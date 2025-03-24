@@ -1,4 +1,5 @@
 import type { Database } from '@/supabase';
+import type { ContentType } from '@/types';
 import { tw } from '@/utils';
 import { Spinner } from '@phosphor-icons/react';
 import type { EmblaCarouselType } from 'embla-carousel';
@@ -136,12 +137,17 @@ const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
 };
 
 export const Embla = ({
-  city,
+  content,
   selectedShotIndexChange,
+  contentType,
   shotsToShow,
 }: {
-  city: Database['public']['Views']['cities_with_creators']['Row'];
+  content:
+    | Database['public']['Views']['cities_details']['Row']
+    | Database['public']['Views']['shots_details']['Row']
+    | Database['public']['Views']['assets_details']['Row'];
   selectedShotIndexChange: (index: number) => void;
+  contentType: ContentType;
   shotsToShow: number;
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -196,8 +202,8 @@ export const Embla = ({
         <div className="flex touch-pan-y">
           {Array.from({ length: shotsToShow }).map((_, index) => (
             <LazyLoadImage
-              key={`${city.id}-${index}`}
-              imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/cities/${city.id}/${index}.webp`}
+              key={`${content.id}-${index}`}
+              imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${content.id}/${content.image_ids?.[index]}.webp`}
               inView={slidesInView.indexOf(index) > -1}
               isLastItem={index === shotsToShow - 1}
             />

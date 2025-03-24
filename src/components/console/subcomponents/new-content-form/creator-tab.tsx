@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 
 const newCreatorSchema = z.object({
+  'creator-id': z.string(),
   'creator-name': z.string(),
   'creator-profile-url': z.string().optional(),
   'creator-profile-url-type': z
@@ -48,6 +49,7 @@ const NewCreatorForm = ({
         if (!validate.success) {
           const formattedErrors = validate.error.format();
           const validationErrors = {
+            'creator-id': formattedErrors['creator-id']?._errors[0],
             'creator-name': formattedErrors['creator-name']?._errors[0],
             'creator-profile-url':
               formattedErrors['creator-profile-url']?._errors[0],
@@ -62,15 +64,16 @@ const NewCreatorForm = ({
         const createCreator = await supabase
           .from('creators')
           .insert({
+            id: validate.data['creator-id'],
             name: validate.data['creator-name'],
             profile_url: validate.data['creator-profile-url'],
             profile_url_type: validate.data['creator-profile-url-type'],
-            created_by_id: user.id,
+            posted_by_id: user.id,
           })
           .select();
         if (createCreator.error) {
           setErrors({
-            'creator-name': createCreator.error.message,
+            'creator-id': createCreator.error.message,
           });
           setLoading(false);
           return;
@@ -79,12 +82,12 @@ const NewCreatorForm = ({
         const updateContent = await supabase
           .from(newContentType)
           .update({
-            original_creator_id: createCreator.data[0].id,
+            creator_id: createCreator.data[0].id,
           })
           .eq('id', cityId);
         if (updateContent.error) {
           setErrors({
-            'creator-name': updateContent.error.message,
+            'creator-id': updateContent.error.message,
           });
           setLoading(false);
           return;
@@ -94,6 +97,10 @@ const NewCreatorForm = ({
         onComplete();
       }}
     >
+      <Field name="creator-id">
+        <Field.Control type="text" placeholder="Creator ID" required />
+        <Field.Error />
+      </Field>
       <Field name="creator-name">
         <Field.Control type="text" placeholder="Creator name" required />
         <Field.Error />
@@ -182,7 +189,7 @@ const ExistingCreatorForm = ({
         const updateContent = await supabase
           .from(newContentType)
           .update({
-            original_creator_id: validate.data['creator-id'],
+            creator_id: validate.data['creator-id'],
           })
           .eq('id', cityId);
         if (updateContent.error) {
