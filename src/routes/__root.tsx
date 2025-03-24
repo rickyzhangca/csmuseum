@@ -8,7 +8,7 @@ import logo from '/logo.svg';
 export const Route = createRootRoute({
   component: () => (
     <div className="flex min-h-screen flex-col">
-      <header className="fixed top-0 right-0 left-0 z-50 bg-white">
+      <header className="fixed top-0 z-50 w-screen bg-white">
         <div className="max-w-8xl mx-auto flex h-[86px] items-center justify-between px-16">
           <img src={logo} alt="Logo" className="h-8" />
           <div className="flex items-center gap-2">

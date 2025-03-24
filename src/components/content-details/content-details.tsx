@@ -5,16 +5,21 @@ import { singularAssetType } from '@/utils';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMeasure } from '@uidotdev/usehooks';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 import titleize from 'titleize';
+import './zoom-styles.css';
 
 interface ContentDetailsProps {
   contentId: string;
   contentType: ContentType;
+  goBack?: () => void;
 }
 
 export const ContentDetails = ({
   contentId,
   contentType,
+  goBack,
 }: ContentDetailsProps) => {
   const [headerRef, { height: headerHeight }] = useMeasure();
 
@@ -65,7 +70,7 @@ export const ContentDetails = ({
           <Button
             variant="outline"
             className="rounded-full"
-            onClick={() => window.history.back()}
+            onClick={() => (goBack ? goBack() : window.history.back())}
             iconOnly
           >
             <ArrowLeft size={20} weight="bold" />
@@ -110,27 +115,31 @@ export const ContentDetails = ({
 
       <div style={{ height: `${headerHeight}px` }} />
 
-      {/* Scrollable image grid content with higher z-index to cover header when scrolling */}
       {content.image_ids && (
         <div className="max-w-8xl relative z-10 mx-auto w-full flex-1 rounded-t-4xl bg-black/95 px-16 py-16 shadow-[0_-24px_24px_-8px_rgba(0,0,0,0.08)]">
           <div className="3xl:grid-cols-3 grid grid-cols-1 gap-6 xl:grid-cols-2">
             {Array.from({ length: content.image_ids.length }).map(
-              (_, index) => (
-                <button
-                  type="button"
-                  key={`${contentId}-shot-${
-                    // biome-ignore lint/suspicious/noArrayIndexKey: static per content and indexed sequentially
-                    index
-                  }`}
-                >
-                  <img
-                    src={`${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${contentId}/${content.image_ids?.[index] || index}.webp`}
-                    loading="lazy"
-                    alt={`${content.name} thumbnail ${index + 1}`}
-                    className="w-full rounded-xl object-cover"
-                  />
-                </button>
-              )
+              (_, index) => {
+                const imageUrl = `${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${contentId}/${content.image_ids?.[index] || index}.webp`;
+                return (
+                  <div
+                    key={`${contentId}-shot-${
+                      // biome-ignore lint/suspicious/noArrayIndexKey: static per content and indexed sequentially
+                      index
+                    }`}
+                    className="overflow-hidden rounded-xl transition hover:z-10 hover:shadow-2xl hover:outline-2 hover:outline-white/30"
+                  >
+                    <Zoom classDialog="custom-zoom" zoomMargin={16}>
+                      <img
+                        src={imageUrl}
+                        loading="lazy"
+                        alt={`${content.name} thumbnail ${index + 1}`}
+                        className="w-full object-cover"
+                      />
+                    </Zoom>
+                  </div>
+                );
+              }
             )}
           </div>
         </div>

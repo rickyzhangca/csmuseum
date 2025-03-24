@@ -1,0 +1,23 @@
+/* Zoom component styles */
+.custom-zoom [data-rmiz-modal-overlay],
+.custom-zoom [data-rmiz-modal-img] {
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+
+.custom-zoom [data-rmiz-modal-img] {
+  border-radius: 8px;
+}
+
+.custom-zoom [data-rmiz-modal-overlay='hidden'] {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.custom-zoom [data-rmiz-modal-overlay='visible'] {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.custom-zoom [data-rmiz-btn-unzoom] {
+  background-color: #ffffff31;
+  color: #ffffffc7;
+}

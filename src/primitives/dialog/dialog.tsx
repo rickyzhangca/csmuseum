@@ -20,21 +20,27 @@ const DialogTrigger = forwardRef<
 
 DialogTrigger.displayName = 'DialogTrigger';
 
-const DialogPopup = forwardRef<HTMLDivElement, DialogPrimitive.Popup.Props>(
-  ({ className, ...props }, ref) => (
-    <DialogPrimitive.Portal>
-      <DialogPrimitive.Backdrop className="fixed inset-0 bg-black opacity-20 transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0 dark:opacity-70" />
-      <DialogPrimitive.Popup
-        ref={ref}
-        className={tw(
-          'scrollbar-thumb-rounded-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-thumb-p scrollbar-track-transparent fixed top-1/2 left-1/2 max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl bg-gray-50 p-6 text-gray-900 outline outline-gray-200 transition-all duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:outline-gray-300',
-          className
-        )}
-        {...props}
-      />
-    </DialogPrimitive.Portal>
-  )
-);
+const DialogPopup = forwardRef<
+  HTMLDivElement,
+  DialogPrimitive.Popup.Props & { darkerBackdrop?: boolean }
+>(({ className, darkerBackdrop = false, ...props }, ref) => (
+  <DialogPrimitive.Portal>
+    <DialogPrimitive.Backdrop
+      className={tw(
+        'fixed inset-0 bg-black transition-all duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0',
+        darkerBackdrop ? 'opacity-80' : 'opacity-20'
+      )}
+    />
+    <DialogPrimitive.Popup
+      ref={ref}
+      className={tw(
+        'scrollbar-thumb-rounded-full scrollbar-thin scrollbar-thumb-gray-300 scrollbar-thumb-p scrollbar-track-transparent fixed top-1/2 left-1/2 max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl bg-gray-50 p-6 text-gray-900 transition duration-150 data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0',
+        className
+      )}
+      {...props}
+    />
+  </DialogPrimitive.Portal>
+));
 
 DialogPopup.displayName = 'DialogPopup';
 
