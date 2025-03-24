@@ -5,11 +5,13 @@
     "embla",
     "nocompatible",
     "nuqs",
+    "rmiz",
     "subcomponents",
     "supa",
     "supabase",
     "titleize",
     "uidotdev",
+    "unzoom",
     "usehooks",
     "VITE"
   ],
