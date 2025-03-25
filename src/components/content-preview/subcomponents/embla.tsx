@@ -111,15 +111,16 @@ const LazyLoadImage = ({
     <div
       className=""
       style={{
-        flex: '0 0 auto',
+        flex: `0 0 ${display === 'single' ? '100%' : 'auto'}`,
         minWidth: '0',
         maxWidth: display === 'single' ? '100%' : '90%',
+
         paddingLeft: '20px',
       }}
     >
       <div
         className={tw(
-          'relative flex transition',
+          'relative transition',
           hasLoaded ? 'opacity-100' : 'opacity-0',
           (display === 'single' || isLastItem) && 'pr-5'
         )}
@@ -135,7 +136,7 @@ const LazyLoadImage = ({
           alt={alt}
           data-src={imgSrc}
           className={tw(
-            'max-h-[480px] rounded-2xl object-cover transition',
+            'm-auto max-h-[480px] rounded-2xl object-cover transition',
             hasLoaded ? 'opacity-100' : 'opacity-0'
           )}
         />

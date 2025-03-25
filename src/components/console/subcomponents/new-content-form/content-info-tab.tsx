@@ -88,10 +88,10 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
           <RadioGroup
             name="type"
             className="flex-row gap-4"
-            defaultValue="city"
+            defaultValue="cities"
           >
             <p className="flex items-center gap-2">
-              <Radio value="city">
+              <Radio value="cities">
                 <Radio.Indicator />
               </Radio>
               City
@@ -103,7 +103,7 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
               Shots
             </p>
             <p className="flex items-center gap-2">
-              <Radio value="asset">
+              <Radio value="assets">
                 <Radio.Indicator />
               </Radio>
               Asset
