@@ -1,6 +1,7 @@
 import { Button } from '@/primitives';
 import { useStore } from '@/store';
 import type { ContentType } from '@/types';
+import { invalidateContentQueries } from '@/utils';
 import { type ChangeEvent, useRef, useState } from 'react';
 
 type ShotsTabProps = {
@@ -189,7 +190,8 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
       if (error) {
         console.error('Error saving image IDs to Supabase:', error);
       } else {
-        console.log(`Saved ${imageData.length} image IDs to ${tableName}`);
+        // invalidate the corresponding query based on content type
+        invalidateContentQueries(newContentType);
       }
     } catch (error) {
       console.error('Error in saveImageIdsToSupabase:', error);
