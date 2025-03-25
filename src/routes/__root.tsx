@@ -19,6 +19,14 @@ export const Route = createRootRoute({
       </header>
       <main className="mt-[86px] flex-1">
         <Outlet />
+        <footer>
+          <div className="max-w-8xl mx-auto flex flex-col items-center justify-center py-24">
+            <p className="text-center text-gray-400">
+              CSMuseum is proudly ad-free and open-source. All contents belong
+              to their creators only.
+            </p>
+          </div>
+        </footer>
       </main>
       <Toaster position="bottom-center" />
       <TanStackRouterDevtools />
