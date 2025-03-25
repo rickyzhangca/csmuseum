@@ -120,6 +120,14 @@ function Index() {
           </div>
         </Tabs.Panel>
       </Tabs>
+      <footer>
+        <div className="max-w-8xl mx-auto flex flex-col items-center justify-center pt-20 pb-16">
+          <p className="text-center text-gray-400">
+            CSMuseum is proudly ad-free and open-source. All contents belong to
+            their creators only.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

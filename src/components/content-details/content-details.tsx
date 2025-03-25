@@ -144,6 +144,14 @@ export const ContentDetails = ({
           </div>
         </div>
       )}
+      <footer>
+        <div className="max-w-8xl mx-auto flex flex-col items-center justify-center bg-black/95 pt-6 pb-16">
+          <p className="text-center text-white/30">
+            CSMuseum is proudly ad-free and open-source. All contents belong to
+            their creators only.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
