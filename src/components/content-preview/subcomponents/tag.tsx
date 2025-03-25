@@ -2,15 +2,13 @@ import { blockInteractions, tw } from '@/utils';
 import { Link, type LinkProps } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 
-export const Tag = ({
-  children,
-  to,
-  target,
-}: {
+type TagProps = {
   children: ReactNode;
   to?: string;
   target?: LinkProps['target'];
-}) => {
+};
+
+export const Tag = ({ children, to, target }: TagProps) => {
   const Content = () => (
     <div
       className={tw(

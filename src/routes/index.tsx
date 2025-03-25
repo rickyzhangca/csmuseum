@@ -84,6 +84,7 @@ function Index() {
             {getCities.data?.map(city => (
               <ContentPreview
                 key={city.id}
+                display="multiple"
                 content={city}
                 contentType="cities"
               />
@@ -97,6 +98,7 @@ function Index() {
             {getShots.data?.map(shot => (
               <ContentPreview
                 key={shot.id}
+                display="single"
                 content={shot}
                 contentType="shots"
               />
@@ -110,6 +112,7 @@ function Index() {
             {getAssets.data?.map(asset => (
               <ContentPreview
                 key={asset.id}
+                display="single"
                 content={asset}
                 contentType="assets"
               />

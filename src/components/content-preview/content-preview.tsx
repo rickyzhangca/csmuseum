@@ -1,10 +1,11 @@
 import { Button } from '@/primitives';
 import type { Database } from '@/supabase';
-import { type ContentType, urlTypeNames } from '@/types';
+import type { ContentType } from '@/types';
 import { tw } from '@/utils';
-import { GlobeSimple, User, XLogo, YoutubeLogo } from '@phosphor-icons/react';
+import { User } from '@phosphor-icons/react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
+import { SourceTag } from '../source_tag';
 import { Embla } from './subcomponents/embla';
 import { Tag } from './subcomponents/tag';
 
@@ -26,6 +27,7 @@ const routeConfig = {
 };
 
 type ContentPreviewProps = {
+  display: 'single' | 'multiple';
   content:
     | Database['public']['Views']['cities_details']['Row']
     | Database['public']['Views']['shots_details']['Row']
@@ -34,6 +36,7 @@ type ContentPreviewProps = {
 };
 
 export const ContentPreview = ({
+  display,
   content,
   contentType,
 }: ContentPreviewProps) => {
@@ -54,44 +57,52 @@ export const ContentPreview = ({
           </Tag>
         )}
         {content.source_url && content.source_url_type && (
-          <Tag to={content.source_url} target="_blank">
-            {content.source_url_type === 'youtube' ? (
-              <YoutubeLogo size={16} weight="fill" />
-            ) : content.source_url_type === 'twitter' ? (
-              <XLogo size={16} />
-            ) : (
-              <GlobeSimple size={16} />
-            )}
-            {urlTypeNames[content.source_url_type]}
-          </Tag>
+          <SourceTag
+            href={content.source_url}
+            sourceType={content.source_url_type}
+          />
         )}
       </div>
-      <div className="flex items-center gap-3 opacity-0 transition group-hover:opacity-100">
-        <div className="flex items-center gap-1.5">
-          {Array.from({ length: shotsToShow }).map((_, index) => (
-            <div
-              key={`${content.id}-${index}`}
-              className={tw(
-                'h-2 w-2 rounded-full',
-                index === selectedShotIndex ? 'bg-gray-900' : 'bg-gray-300'
-              )}
-            />
-          ))}
+      {shotsToShow > 1 && (
+        <div className="flex items-center gap-3 opacity-0 transition group-hover:opacity-100">
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: shotsToShow }).map((_, index) => (
+              <div
+                key={`${content.id}-${index}`}
+                className={tw(
+                  'h-2 w-2 rounded-full',
+                  index === selectedShotIndex ? 'bg-gray-900' : 'bg-gray-300'
+                )}
+              />
+            ))}
+          </div>
+          {content.image_ids &&
+            content.image_ids.length > MAX_SHOTS_TO_SHOW &&
+            content.id && (
+              <Tag to={`/${contentType}/${content.id}`}>
+                +{content.image_ids.length - MAX_SHOTS_TO_SHOW}
+              </Tag>
+            )}
         </div>
-        {content.image_ids &&
-          content.image_ids.length > MAX_SHOTS_TO_SHOW &&
-          content.id && (
-            <Tag to={`/${contentType}/${content.id}`}>
-              +{content.image_ids.length - MAX_SHOTS_TO_SHOW}
-            </Tag>
-          )}
-      </div>
+      )}
     </div>
   );
 
   const Shots = () => {
+    if (display === 'single') {
+      return (
+        <Embla
+          display="single"
+          content={content}
+          contentType={contentType}
+          shotsToShow={shotsToShow}
+          selectedShotIndexChange={setSelectedShotIndex}
+        />
+      );
+    }
     return (
       <Embla
+        display="multiple"
         content={content}
         contentType={contentType}
         shotsToShow={shotsToShow}

@@ -5,7 +5,7 @@ import { Spinner } from '@phosphor-icons/react';
 import type { EmblaCarouselType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
-import { EmblaControls } from './embla-controls';
+import { EmblaControl } from './embla-controls';
 
 type UsePrevNextButtonsType = {
   prevBtnDisabled: boolean;
@@ -90,9 +90,17 @@ type LazyLoadImageProps = {
   imgSrc: string;
   inView: boolean;
   isLastItem: boolean;
+  display: 'single' | 'multiple';
+  alt: string;
 };
 
-const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
+const LazyLoadImage = ({
+  imgSrc,
+  inView,
+  isLastItem,
+  display,
+  alt,
+}: LazyLoadImageProps) => {
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const setLoaded = useCallback(() => {
@@ -105,7 +113,7 @@ const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
       style={{
         flex: '0 0 auto',
         minWidth: '0',
-        maxWidth: '90%',
+        maxWidth: display === 'single' ? '100%' : '90%',
         paddingLeft: '20px',
       }}
     >
@@ -113,7 +121,7 @@ const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
         className={tw(
           'relative flex transition',
           hasLoaded ? 'opacity-100' : 'opacity-0',
-          isLastItem && 'pr-5'
+          (display === 'single' || isLastItem) && 'pr-5'
         )}
       >
         {!hasLoaded && (
@@ -124,10 +132,10 @@ const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
         <img
           onLoad={setLoaded}
           src={inView ? imgSrc : PLACEHOLDER_SRC}
-          alt="Your alt text"
+          alt={alt}
           data-src={imgSrc}
           className={tw(
-            'h-[480px] rounded-2xl object-cover transition',
+            'max-h-[480px] rounded-2xl object-cover transition',
             hasLoaded ? 'opacity-100' : 'opacity-0'
           )}
         />
@@ -137,11 +145,13 @@ const LazyLoadImage = ({ imgSrc, inView, isLastItem }: LazyLoadImageProps) => {
 };
 
 export const Embla = ({
+  display,
   content,
   selectedShotIndexChange,
   contentType,
   shotsToShow,
 }: {
+  display: 'single' | 'multiple';
   content:
     | Database['public']['Views']['cities_details']['Row']
     | Database['public']['Views']['shots_details']['Row']
@@ -193,7 +203,8 @@ export const Embla = ({
 
   return (
     <section className="embla relative max-w-full">
-      <EmblaControls
+      <EmblaControl
+        display={display}
         type="prev"
         hide={prevBtnDisabled}
         onClick={onPrevButtonClick}
@@ -202,15 +213,18 @@ export const Embla = ({
         <div className="flex touch-pan-y">
           {Array.from({ length: shotsToShow }).map((_, index) => (
             <LazyLoadImage
+              display={display}
               key={`${content.id}-${index}`}
               imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${content.id}/${content.image_ids?.[index]}.webp`}
               inView={slidesInView.indexOf(index) > -1}
               isLastItem={index === shotsToShow - 1}
+              alt={`${content.name} - shot ${index + 1}`}
             />
           ))}
         </div>
       </div>
-      <EmblaControls
+      <EmblaControl
+        display={display}
         type="next"
         hide={nextBtnDisabled}
         onClick={onNextButtonClick}
