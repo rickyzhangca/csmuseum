@@ -161,7 +161,7 @@ export const ContentDetails = ({
                       variant={
                         imageId === content.thumbnail_image_id
                           ? 'destructive'
-                          : 'secondary'
+                          : 'admin'
                       }
                       onClick={async () => {
                         if (imageId === content.thumbnail_image_id) {

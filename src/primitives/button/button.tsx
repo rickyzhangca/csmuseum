@@ -1,6 +1,11 @@
 import { tw } from '@/utils';
 
-type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'outline';
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'destructive'
+  | 'outline'
+  | 'admin';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   iconOnly?: boolean;
@@ -10,7 +15,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 export const Button = ({
   className,
   children,
-  iconOnly = false,
+  iconOnly,
   variant = 'primary',
   ...props
 }: ButtonProps) => {
@@ -26,7 +31,9 @@ export const Button = ({
               ? 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800'
               : variant === 'outline'
                 ? 'border-gray-200 bg-transparent text-gray-900 hover:bg-gray-100 active:bg-gray-200'
-                : '',
+                : variant === 'admin'
+                  ? 'bg-pink-600 text-white hover:bg-pink-700 active:bg-pink-800'
+                  : '',
         iconOnly ? 'p-3' : 'px-4 py-2.5',
         className
       )}

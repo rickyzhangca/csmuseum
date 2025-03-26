@@ -132,7 +132,7 @@ const NewCreatorForm = ({
           </Select.Popup>
         </Select>
       </Field>
-      <Button disabled={loading} type="submit">
+      <Button disabled={loading} type="submit" variant="admin">
         Create creator
       </Button>
     </Form>

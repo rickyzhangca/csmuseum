@@ -168,7 +168,7 @@ export const ContentInfoTab = ({
         <Field.Error />
       </Field>
 
-      <Button disabled={loading} type="submit">
+      <Button disabled={loading} type="submit" variant="admin">
         Create content
       </Button>
     </Form>

@@ -30,10 +30,10 @@ export const Console = () => {
           render={() => (
             <Button
               type="button"
-              variant="secondary"
+              variant="admin"
               onClick={() => setIsShowingConsole(true)}
             >
-              Add a content (Admin)
+              Add a content
             </Button>
           )}
         />

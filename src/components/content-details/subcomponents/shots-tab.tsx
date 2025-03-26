@@ -221,6 +221,7 @@ export const ShotsTab = ({ contentType, content }: ShotsTabProps) => {
             isUploading || selectedFiles.length === 0 || !destinationPath
           }
           className="w-full"
+          variant="admin"
         >
           {isUploading
             ? 'Uploading...'
