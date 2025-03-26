@@ -29,11 +29,11 @@ export const EmblaControl = ({
       )}
       onClick={e => {
         onClick();
-        blockInteractions(e, 'prevent');
+        blockInteractions(e, 'stop');
       }}
       onKeyDown={e => {
         onClick();
-        blockInteractions(e, 'prevent');
+        blockInteractions(e, 'stop');
       }}
     >
       {type === 'prev' ? (

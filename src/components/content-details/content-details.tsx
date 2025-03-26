@@ -5,6 +5,7 @@ import { singularAssetType } from '@/utils';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMeasure } from '@uidotdev/usehooks';
+import { useEffect } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import titleize from 'titleize';
@@ -35,6 +36,15 @@ export const ContentDetails = ({
       return data;
     },
   });
+
+  //TODO - extract this into reusable hook
+  useEffect(() => {
+    if (getContentDetail.data?.name) {
+      // https://stackoverflow.com/a/72982893
+      document.title = '';
+      document.title = getContentDetail.data.name;
+    }
+  }, [getContentDetail.data]);
 
   if (getContentDetail.isLoading) {
     return (
@@ -121,19 +131,20 @@ export const ContentDetails = ({
             {Array.from({ length: content.image_ids.length }).map(
               (_, index) => {
                 const imageUrl = `${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${contentId}/${content.image_ids?.[index] || index}.webp`;
+                const alt = `${content.name} thumbnail ${index + 1}`;
                 return (
                   <div
                     key={`${contentId}-shot-${
                       // biome-ignore lint/suspicious/noArrayIndexKey: static per content and indexed sequentially
                       index
                     }`}
-                    className="overflow-hidden rounded-xl transition hover:z-10 hover:shadow-2xl hover:outline-2 hover:outline-white/30"
+                    className="flex items-center justify-center overflow-hidden rounded-xl bg-white/10 transition hover:z-10 hover:shadow-2xl hover:outline-2 hover:outline-white/30"
                   >
                     <Zoom classDialog="custom-zoom" zoomMargin={16}>
                       <img
                         src={imageUrl}
                         loading="lazy"
-                        alt={`${content.name} thumbnail ${index + 1}`}
+                        alt={alt}
                         className="w-full object-cover"
                       />
                     </Zoom>

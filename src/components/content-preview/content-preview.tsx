@@ -3,7 +3,7 @@ import type { Database } from '@/supabase';
 import type { ContentType } from '@/types';
 import { tw } from '@/utils';
 import { User } from '@phosphor-icons/react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { SourceTag } from '../source_tag';
 import { Embla } from './subcomponents/embla';
@@ -40,6 +40,7 @@ export const ContentPreview = ({
   content,
   contentType,
 }: ContentPreviewProps) => {
+  const navigate = useNavigate();
   const [selectedShotIndex, setSelectedShotIndex] = useState(0);
   const routeInfo = routeConfig[contentType];
 
@@ -51,7 +52,7 @@ export const ContentPreview = ({
     <div className="flex items-center justify-between gap-2 px-5">
       <div className="flex items-center gap-1.5">
         {content.creator_profile_url && (
-          <Tag to={content.creator_profile_url} target="_blank">
+          <Tag href={content.creator_profile_url} target="_blank">
             <User size={16} weight="bold" />
             {content.creator_name}
           </Tag>
@@ -79,7 +80,7 @@ export const ContentPreview = ({
           {content.image_ids &&
             content.image_ids.length > MAX_SHOTS_TO_SHOW &&
             content.id && (
-              <Tag to={`/${contentType}/${content.id}`}>
+              <Tag to={routeInfo.path} params={routeInfo.getParams(content.id)}>
                 +{content.image_ids.length - MAX_SHOTS_TO_SHOW}
               </Tag>
             )}
@@ -132,21 +133,38 @@ export const ContentPreview = ({
     </>
   );
 
+  const params = content.id ? routeInfo.getParams(content.id) : undefined;
+
   return (
-    <>
-      {content.id && (
-        <Link
-          to={routeInfo.path}
-          params={routeInfo.getParams(content.id)}
-          className="flex flex-col gap-3"
-        >
-          <div className="group flex flex-col gap-5 overflow-hidden rounded-3xl bg-gray-900/4 pt-5 transition hover:bg-gray-900/6">
-            <Meta />
-            <Shots />
-            <Info />
-          </div>
-        </Link>
+    <div
+      className={tw(
+        'flex flex-col gap-3 overflow-hidden rounded-3xl',
+        params && 'cursor-pointer'
       )}
-    </>
+      onClick={() => {
+        if (params) {
+          navigate({
+            to: routeInfo.path,
+            params: params,
+          });
+        }
+      }}
+      onKeyDown={event => {
+        if (event.key === 'Enter') {
+          if (params) {
+            navigate({
+              to: routeInfo.path,
+              params: params,
+            });
+          }
+        }
+      }}
+    >
+      <div className="group flex flex-col gap-5 bg-gray-900/4 pt-5 transition hover:bg-gray-900/6">
+        <Meta />
+        <Shots />
+        <Info />
+      </div>
+    </div>
   );
 };

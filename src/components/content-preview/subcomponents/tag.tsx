@@ -4,37 +4,41 @@ import type { ReactNode } from 'react';
 
 type TagProps = {
   children: ReactNode;
-  to?: string;
+  href?: string;
+  to?: LinkProps['to'];
   target?: LinkProps['target'];
+  params?: LinkProps['params'];
 };
 
-export const Tag = ({ children, to, target }: TagProps) => {
-  const Content = () => (
+export const Tag = ({ children, href, to, target, params }: TagProps) => {
+  const Content = ({ withHandlers = false }) => (
     <div
       className={tw(
         'flex items-center gap-1.5 rounded-lg bg-gray-900/40 px-2 py-1 text-sm font-medium text-white transition',
-        to && 'hover:bg-gray-900/50',
-        !to && 'cursor-default'
+        (to || href) && 'hover:bg-gray-900/50',
+        !(to || href) && 'cursor-default'
       )}
-      onClick={e => blockInteractions(e, to ? 'stop' : 'prevent')}
-      onKeyDown={e => blockInteractions(e, to ? 'stop' : 'prevent')}
+      {...(withHandlers && {
+        onClick: e => blockInteractions(e, to || href ? 'stop' : 'prevent'),
+        onKeyDown: e => blockInteractions(e, to || href ? 'stop' : 'prevent'),
+      })}
     >
       {children}
     </div>
   );
 
-  if (!to) return <Content />;
+  if (!to && !href) return <Content />;
 
-  if (to.startsWith('http')) {
+  if (href) {
     return (
-      <a href={to} target={target}>
-        <Content />
+      <a href={href} target={target} rel="noreferrer">
+        <Content withHandlers />
       </a>
     );
   }
 
   return (
-    <Link to={to} target={target}>
+    <Link to={to} target={target} params={params}>
       <Content />
     </Link>
   );

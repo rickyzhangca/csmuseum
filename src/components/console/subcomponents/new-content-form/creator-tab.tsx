@@ -1,6 +1,7 @@
 import { Button, Field, Form, Radio, RadioGroup, Select } from '@/primitives';
 import { useStore } from '@/store';
 import type { ContentType } from '@/types';
+import { sanitizeXiaohongshuUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -59,6 +60,15 @@ const NewCreatorForm = ({
           setErrors(validationErrors);
           setLoading(false);
           return;
+        }
+
+        if (
+          validate.data['creator-profile-url-type'] === 'xiaohongshu' &&
+          validate.data['creator-profile-url']
+        ) {
+          validate.data['creator-profile-url'] = sanitizeXiaohongshuUrl(
+            validate.data['creator-profile-url']
+          );
         }
 
         const createCreator = await supabase

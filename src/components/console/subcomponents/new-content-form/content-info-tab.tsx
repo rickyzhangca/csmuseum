@@ -1,6 +1,7 @@
 import { Button, Field, Form, Radio, RadioGroup, Select } from '@/primitives';
 import { useStore } from '@/store';
 import { CONTENT_TYPES, type ContentType, URL_TYPE } from '@/types';
+import { sanitizeXiaohongshuUrl } from '@/utils';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 
@@ -60,6 +61,15 @@ export const ContentInfoTab = ({ onComplete }: ContentInfoTabProps) => {
           setErrors(validationErrors);
           setLoading(false);
           return;
+        }
+
+        if (
+          validate.data.source_url_type === 'xiaohongshu' &&
+          validate.data.source_url
+        ) {
+          validate.data.source_url = sanitizeXiaohongshuUrl(
+            validate.data.source_url
+          );
         }
 
         const createContent = await supabase.from(validate.data.type).insert({

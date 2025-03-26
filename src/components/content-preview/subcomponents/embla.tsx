@@ -109,7 +109,7 @@ const LazyLoadImage = ({
 
   return (
     <div
-      className=""
+      className="flex items-center justify-center"
       style={{
         flex: `0 0 ${display === 'single' ? '100%' : 'auto'}`,
         minWidth: '0',
