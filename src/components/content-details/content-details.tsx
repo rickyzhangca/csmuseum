@@ -1,14 +1,16 @@
 import { Button } from '@/primitives';
 import { supabase } from '@/supabase';
 import { type ContentType, urlTypeNames } from '@/types';
-import { singularAssetType } from '@/utils';
+import { invalidateContentQueries, singularAssetType, tw } from '@/utils';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMeasure } from '@uidotdev/usehooks';
 import { useEffect } from 'react';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { toast } from 'sonner';
 import titleize from 'titleize';
+import { Editor } from './subcomponents/editor';
 import './zoom-styles.css';
 
 interface ContentDetailsProps {
@@ -128,35 +130,87 @@ export const ContentDetails = ({
       {content.image_ids && (
         <div className="max-w-8xl relative z-10 mx-auto w-full flex-1 rounded-t-4xl bg-black/95 px-16 py-16 shadow-[0_-24px_24px_-8px_rgba(0,0,0,0.08)]">
           <div className="3xl:grid-cols-3 grid grid-cols-1 gap-6 xl:grid-cols-2">
-            {Array.from({ length: content.image_ids.length }).map(
-              (_, index) => {
-                const imageUrl = `${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${contentId}/${content.image_ids?.[index] || index}.webp`;
-                const alt = `${content.name} thumbnail ${index + 1}`;
-                return (
+            {content.image_ids.map((imageId, index) => {
+              const imageUrl = `${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${contentId}/${imageId}.webp`;
+              const alt = `${content.name} thumbnail ${index + 1}`;
+              return (
+                <div
+                  key={`${contentId}-shot-${
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static per content and indexed sequentially
+                    index
+                  }`}
+                  className="group relative flex items-center justify-center overflow-hidden rounded-xl bg-white/10 transition hover:z-10 hover:shadow-2xl hover:outline-2 hover:outline-white/30"
+                >
+                  <Zoom classDialog="custom-zoom" zoomMargin={16}>
+                    <img
+                      src={imageUrl}
+                      loading="lazy"
+                      alt={alt}
+                      className="w-full object-cover"
+                    />
+                  </Zoom>
                   <div
-                    key={`${contentId}-shot-${
-                      // biome-ignore lint/suspicious/noArrayIndexKey: static per content and indexed sequentially
-                      index
-                    }`}
-                    className="flex items-center justify-center overflow-hidden rounded-xl bg-white/10 transition hover:z-10 hover:shadow-2xl hover:outline-2 hover:outline-white/30"
+                    className={tw(
+                      'absolute right-4 bottom-4 flex items-center justify-center gap-2',
+                      (!content.thumbnail_image_id ||
+                        imageId !== content.thumbnail_image_id) &&
+                        'opacity-0 transition group-hover:opacity-100'
+                    )}
                   >
-                    <Zoom classDialog="custom-zoom" zoomMargin={16}>
-                      <img
-                        src={imageUrl}
-                        loading="lazy"
-                        alt={alt}
-                        className="w-full object-cover"
-                      />
-                    </Zoom>
+                    <Button
+                      variant={
+                        imageId === content.thumbnail_image_id
+                          ? 'destructive'
+                          : 'secondary'
+                      }
+                      onClick={async () => {
+                        if (imageId === content.thumbnail_image_id) {
+                          const { error } = await supabase
+                            .from(contentType)
+                            .update({
+                              thumbnail_image_id: null,
+                            })
+                            .eq('id', contentId);
+
+                          if (error) {
+                            toast.error('Failed to unset thumbnail');
+                          } else {
+                            toast.success('Thumbnail unset successfully');
+                            invalidateContentQueries(contentType, contentId);
+                          }
+                        } else {
+                          const { error } = await supabase
+                            .from(contentType)
+                            .update({
+                              thumbnail_image_id: imageId,
+                            })
+                            .eq('id', contentId);
+
+                          if (error) {
+                            toast.error('Failed to set thumbnail');
+                          } else {
+                            toast.success('Thumbnail updated successfully');
+                            invalidateContentQueries(contentType, contentId);
+                          }
+                        }
+                      }}
+                    >
+                      {imageId === content.thumbnail_image_id
+                        ? 'Unset thumbnail'
+                        : 'Set as thumbnail'}
+                    </Button>
                   </div>
-                );
-              }
-            )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
+
+      <Editor content={content} contentType={contentType} />
+
       <footer>
-        <div className="max-w-8xl mx-auto flex flex-col items-center justify-center bg-black/95 pt-6 pb-16">
+        <div className="max-w-8xl flex flex-col items-center justify-center bg-black/95 px-16 pt-6 pb-16">
           <p className="text-center text-white/30">
             CSMuseum is proudly ad-free and open-source. All contents belong to
             their creators only.

@@ -159,7 +159,7 @@ export const Embla = ({
     | Database['public']['Views']['assets_details']['Row'];
   selectedShotIndexChange: (index: number) => void;
   contentType: ContentType;
-  shotsToShow: number;
+  shotsToShow: string[];
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -212,13 +212,13 @@ export const Embla = ({
       />
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex touch-pan-y">
-          {Array.from({ length: shotsToShow }).map((_, index) => (
+          {shotsToShow.map((id, index) => (
             <LazyLoadImage
               display={display}
               key={`${content.id}-${index}`}
-              imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${content.id}/${content.image_ids?.[index]}.webp`}
+              imgSrc={`${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${content.id}/${id}.webp`}
               inView={slidesInView.indexOf(index) > -1}
-              isLastItem={index === shotsToShow - 1}
+              isLastItem={index === shotsToShow.length - 1}
               alt={`${content.name} - shot ${index + 1}`}
             />
           ))}

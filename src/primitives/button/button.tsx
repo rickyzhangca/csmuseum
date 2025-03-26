@@ -23,7 +23,7 @@ export const Button = ({
           : variant === 'secondary'
             ? 'bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-100'
             : variant === 'destructive'
-              ? 'bg-red-100 text-red-600 hover:bg-red-200 active:bg-red-100'
+              ? 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800'
               : variant === 'outline'
                 ? 'border-gray-200 bg-transparent text-gray-900 hover:bg-gray-100 active:bg-gray-200'
                 : '',

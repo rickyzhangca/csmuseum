@@ -19,6 +19,7 @@ export type Database = {
           posted_by_id: string | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id: string | null
         }
         Insert: {
           created_at?: string
@@ -29,6 +30,7 @@ export type Database = {
           posted_by_id?: string | null
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id?: string | null
         }
         Update: {
           created_at?: string
@@ -39,6 +41,7 @@ export type Database = {
           posted_by_id?: string | null
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id?: string | null
         }
         Relationships: [
           {
@@ -68,6 +71,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "shots_details"
             referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "assets_thumbnail_image_id_fkey"
+            columns: ["thumbnail_image_id"]
+            isOneToOne: false
+            referencedRelation: "assets_images"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -117,6 +127,7 @@ export type Database = {
           posted_by_id: string | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id: string | null
         }
         Insert: {
           created_at?: string
@@ -127,6 +138,7 @@ export type Database = {
           posted_by_id?: string | null
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id?: string | null
         }
         Update: {
           created_at?: string
@@ -137,6 +149,7 @@ export type Database = {
           posted_by_id?: string | null
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id?: string | null
         }
         Relationships: [
           {
@@ -166,6 +179,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "shots_details"
             referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "cities_thumbnail_image_id_fkey"
+            columns: ["thumbnail_image_id"]
+            isOneToOne: false
+            referencedRelation: "cities_images"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -263,6 +283,7 @@ export type Database = {
           posted_by_id: string | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id: string | null
         }
         Insert: {
           created_at?: string
@@ -273,6 +294,7 @@ export type Database = {
           posted_by_id?: string | null
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id?: string | null
         }
         Update: {
           created_at?: string
@@ -283,6 +305,7 @@ export type Database = {
           posted_by_id?: string | null
           source_url?: string | null
           source_url_type?: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id?: string | null
         }
         Relationships: [
           {
@@ -312,6 +335,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "shots_details"
             referencedColumns: ["creator_id"]
+          },
+          {
+            foreignKeyName: "shots_thumbnail_image_id_fkey"
+            columns: ["thumbnail_image_id"]
+            isOneToOne: false
+            referencedRelation: "shots_images"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -371,8 +401,17 @@ export type Database = {
           posted_by_id: string | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "assets_thumbnail_image_id_fkey"
+            columns: ["thumbnail_image_id"]
+            isOneToOne: false
+            referencedRelation: "assets_images"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cities_details: {
         Row: {
@@ -392,8 +431,17 @@ export type Database = {
           posted_by_id: string | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cities_thumbnail_image_id_fkey"
+            columns: ["thumbnail_image_id"]
+            isOneToOne: false
+            referencedRelation: "cities_images"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shots_details: {
         Row: {
@@ -413,8 +461,17 @@ export type Database = {
           posted_by_id: string | null
           source_url: string | null
           source_url_type: Database["public"]["Enums"]["URL_TYPE"] | null
+          thumbnail_image_id: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shots_thumbnail_image_id_fkey"
+            columns: ["thumbnail_image_id"]
+            isOneToOne: false
+            referencedRelation: "shots_images"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {

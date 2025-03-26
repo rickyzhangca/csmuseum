@@ -4,7 +4,7 @@ import type { ContentType } from '@/types';
 import { tw } from '@/utils';
 import { User } from '@phosphor-icons/react';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SourceTag } from '../source_tag';
 import { Embla } from './subcomponents/embla';
 import { Tag } from './subcomponents/tag';
@@ -46,7 +46,19 @@ export const ContentPreview = ({
 
   if (!content.image_ids || content.image_ids.length === 0) return null;
 
-  const shotsToShow = Math.min(content.image_ids.length, MAX_SHOTS_TO_SHOW);
+  const getShotsToShow = useCallback(() => {
+    if (!content.image_ids?.length) return [];
+
+    const maxShots = MAX_SHOTS_TO_SHOW;
+    const sliced = content.image_ids.slice(0, maxShots);
+    const thumbnailId = content.thumbnail_image_id;
+
+    if (!thumbnailId) return sliced;
+
+    return sliced.includes(thumbnailId)
+      ? [thumbnailId, ...sliced.filter(id => id !== thumbnailId)]
+      : [thumbnailId, ...sliced.slice(0, maxShots - 1)];
+  }, [content.image_ids, content.thumbnail_image_id]);
 
   const Meta = () => (
     <div className="flex items-center justify-between gap-2 px-5">
@@ -64,10 +76,10 @@ export const ContentPreview = ({
           />
         )}
       </div>
-      {shotsToShow > 1 && (
+      {getShotsToShow().length > 1 && (
         <div className="flex items-center gap-3 opacity-0 transition group-hover:opacity-100">
           <div className="flex items-center gap-1.5">
-            {Array.from({ length: shotsToShow }).map((_, index) => (
+            {getShotsToShow().map((_, index) => (
               <div
                 key={`${content.id}-${index}`}
                 className={tw(
@@ -96,7 +108,7 @@ export const ContentPreview = ({
           display="single"
           content={content}
           contentType={contentType}
-          shotsToShow={shotsToShow}
+          shotsToShow={getShotsToShow()}
           selectedShotIndexChange={setSelectedShotIndex}
         />
       );
@@ -106,7 +118,7 @@ export const ContentPreview = ({
         display="multiple"
         content={content}
         contentType={contentType}
-        shotsToShow={shotsToShow}
+        shotsToShow={getShotsToShow()}
         selectedShotIndexChange={setSelectedShotIndex}
       />
     );

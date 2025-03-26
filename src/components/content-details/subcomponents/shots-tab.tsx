@@ -1,15 +1,15 @@
 import { Button } from '@/primitives';
 import { useStore } from '@/store';
-import type { ContentType } from '@/types';
-import { invalidateContentTypeQueries } from '@/utils';
+import type { Content, ContentType } from '@/types';
+import { invalidateContentQueries } from '@/utils';
 import { type ChangeEvent, useRef, useState } from 'react';
 
 type ShotsTabProps = {
-  newContentType: ContentType | null;
-  cityId: string | null;
+  contentType: ContentType;
+  content: Content;
 };
 
-export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
+export const ShotsTab = ({ contentType, content }: ShotsTabProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -17,9 +17,9 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { supabase } = useStore();
 
-  const destinationPath = `${newContentType}/${cityId}`;
+  const destinationPath = `${contentType}/${content.id}`;
 
-  if (!cityId || !newContentType)
+  if (!content.id || !contentType)
     return (
       <div className="flex w-full items-center justify-center rounded-xl bg-red-100 p-4 text-red-600">
         City ID or new content type missing
@@ -175,11 +175,11 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
       }
 
       // Determine which table to use based on content type
-      const tableName = `${newContentType}_images`;
+      const tableName = `${contentType}_images`;
 
       // Prepare image data for insertion
       const imageData = urls.map(url => ({
-        content_id: cityId as string,
+        content_id: content.id,
         id: extractImageIdFromUrl(url),
         posted_by: userId,
       }));
@@ -191,7 +191,7 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
         console.error('Error saving image IDs to Supabase:', error);
       } else {
         // invalidate the corresponding query based on content type
-        invalidateContentTypeQueries(newContentType);
+        if (content.id) invalidateContentQueries(contentType, content.id);
       }
     } catch (error) {
       console.error('Error in saveImageIdsToSupabase:', error);
@@ -199,7 +199,7 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
   };
 
   return (
-    <div className="mx-auto w-full rounded-xl border border-gray-200 p-4">
+    <div className="mx-auto w-full rounded-2xl border-gray-200 bg-white p-4">
       <div className="space-y-4">
         <div className="flex flex-col gap-2">
           <input
@@ -239,40 +239,6 @@ export const ShotsTab = ({ newContentType, cityId }: ShotsTabProps) => {
               {uploadedImageUrls.length === 1
                 ? 'Image uploaded successfully!'
                 : `${uploadedImageUrls.length} images uploaded successfully!`}
-            </div>
-
-            <div className="flex gap-2">
-              {uploadedImageUrls.map((url, index) => (
-                <div key={url} className="rounded-md border p-3">
-                  <p className="mb-2 text-sm font-medium">
-                    Image {index + 1} URL:
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={url}
-                      readOnly
-                      className="flex-1 rounded-md border bg-gray-50 p-2 text-sm"
-                    />
-                    <Button
-                      variant="secondary"
-                      type="button"
-                      onClick={() => navigator.clipboard.writeText(url)}
-                      className="rounded-md bg-gray-200 p-2 hover:bg-gray-300"
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                  <div className="mt-2">
-                    <p className="mb-2 text-sm font-medium">Preview:</p>
-                    <img
-                      src={url}
-                      alt={`Uploaded content ${index + 1}`}
-                      className="h-auto max-h-64 max-w-full rounded-md border"
-                    />
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         )}
