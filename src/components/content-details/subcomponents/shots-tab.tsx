@@ -181,7 +181,7 @@ export const ShotsTab = ({ contentType, content }: ShotsTabProps) => {
       const imageData = urls.map(url => ({
         content_id: content.id,
         id: extractImageIdFromUrl(url),
-        posted_by: userId,
+        posted_by_id: userId,
       }));
 
       // Insert image metadata into Supabase

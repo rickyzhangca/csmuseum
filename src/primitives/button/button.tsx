@@ -22,7 +22,7 @@ export const Button = ({
   return (
     <button
       className={tw(
-        'flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent font-medium disabled:cursor-not-allowed disabled:opacity-50',
+        'flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent text-base font-medium disabled:cursor-not-allowed disabled:opacity-50',
         variant === 'primary'
           ? 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
           : variant === 'secondary'

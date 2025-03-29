@@ -1,7 +1,13 @@
 import { Button } from '@/primitives';
 import { supabase } from '@/supabase';
 import { type ContentType, urlTypeNames } from '@/types';
-import { invalidateContentQueries, singularAssetType, tw } from '@/utils';
+import {
+  canShowConsole,
+  invalidateContentQueries,
+  invalidateContentTypeQueries,
+  singularAssetType,
+  tw,
+} from '@/utils';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMeasure } from '@uidotdev/usehooks';
@@ -74,6 +80,96 @@ export const ContentDetails = ({
     );
   }
 
+  const handleDelete = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+
+    if (!token) {
+      toast.error('Authentication required. Please sign in.');
+      return;
+    }
+
+    try {
+      // Delete each image from Bunny CDN
+      if (content.image_ids && content.image_ids.length > 0) {
+        const deletePromises = content.image_ids.map(async imageId => {
+          const imagePath = `${contentType}/${contentId}/${imageId}.webp`;
+
+          try {
+            const response = await fetch(
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bunny-delete`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ imagePath }),
+              }
+            );
+
+            const result = await response.json();
+
+            if (!result.success) {
+              console.error(
+                `Failed to delete image ${imageId} from CDN:`,
+                result.error
+              );
+            }
+          } catch (error) {
+            console.error(`Error deleting image ${imageId} from CDN:`, error);
+          }
+        });
+
+        // Wait for all image deletion requests to complete
+        await Promise.all(deletePromises);
+      }
+
+      // Delete all images from the database
+      const { error: imageDeleteError } = await supabase
+        .from(`${contentType}_images`)
+        .delete()
+        .eq('content_id', contentId);
+
+      if (imageDeleteError) {
+        console.error(
+          'Failed to delete images from database:',
+          imageDeleteError
+        );
+      }
+
+      // Finally delete the content itself
+      const { error } = await supabase
+        .from(contentType)
+        .delete()
+        .eq('id', contentId);
+
+      if (error) {
+        toast.error(
+          `Failed to delete ${singularAssetType[contentType]}: ${error.message}`
+        );
+        return;
+      }
+
+      toast.success(
+        `Deleted ${singularAssetType[contentType]} and all associated images`
+      );
+      invalidateContentTypeQueries(contentType);
+      invalidateContentQueries(contentType, contentId);
+
+      if (goBack) {
+        goBack();
+      } else {
+        window.history.back();
+      }
+    } catch (error) {
+      toast.error(
+        `An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      console.error('Error in handleDelete:', error);
+    }
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-86px)] flex-col">
       {/* match nav height */}
@@ -87,8 +183,13 @@ export const ContentDetails = ({
           >
             <ArrowLeft size={20} weight="bold" />
           </Button>
-          <h1>
+          <h1 className="flex items-center gap-4">
             {content.name} — {titleize(singularAssetType[contentType])}
+            {canShowConsole() && (
+              <Button variant="destructive" onClick={handleDelete}>
+                Delete
+              </Button>
+            )}
           </h1>
           <div className="flex items-center gap-10">
             <div className="flex flex-col">
