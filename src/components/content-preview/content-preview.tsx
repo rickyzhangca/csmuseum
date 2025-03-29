@@ -61,7 +61,7 @@ export const ContentPreview = ({
   }, [content.image_ids, content.thumbnail_image_id]);
 
   const Meta = () => (
-    <div className="flex items-center justify-between gap-2 px-5">
+    <div className="flex items-center justify-between gap-3 px-3 sm:px-5">
       <div className="flex items-center gap-1.5">
         {content.creator_profile_url && (
           <Tag href={content.creator_profile_url} target="_blank">
@@ -127,7 +127,7 @@ export const ContentPreview = ({
   const Info = () => (
     <>
       {content.id && (
-        <div className="mx-5 mb-5 flex items-center justify-between rounded-xl px-5 py-3 transition group-hover:bg-white hover:shadow-2xs">
+        <div className="mx-2 mb-2 flex items-center justify-between rounded-xl px-4 py-2 transition group-hover:bg-white hover:shadow-2xs sm:mx-5 sm:mb-5 sm:px-5 sm:py-3">
           <div>
             <p className="text-lg font-medium">{content.name}</p>
             <p className="text-sm text-gray-500">{content.outline}</p>
@@ -150,7 +150,7 @@ export const ContentPreview = ({
   return (
     <div
       className={tw(
-        'flex flex-col gap-3 overflow-hidden rounded-3xl',
+        'flex flex-col gap-3 overflow-hidden rounded-xl sm:rounded-3xl',
         params && 'cursor-pointer'
       )}
       onClick={() => {
@@ -172,7 +172,7 @@ export const ContentPreview = ({
         }
       }}
     >
-      <div className="group flex flex-col gap-5 bg-gray-900/4 pt-5 transition hover:bg-gray-900/6">
+      <div className="group flex h-full flex-col gap-3 bg-gray-900/4 pt-3 transition hover:bg-gray-900/6 sm:gap-5 sm:pt-5">
         <Meta />
         <Shots />
         <Info />

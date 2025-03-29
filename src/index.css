@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@plugin 'tailwindcss-debug-screens' {
+  position: 'top, left';
+  prefix: 'screen: ';
+}
 @plugin 'tailwind-scrollbar' {
   /* biome-ignore lint/correctness/noUnknownProperty: https://adoxography.github.io/tailwind-scrollbar/getting-started#nocompatible */
   nocompatible: true;
@@ -17,7 +21,8 @@
 }
 
 @theme {
-  --breakpoint-3xl: 160rem;
+  --breakpoint-3xl: 120rem;
+  --breakpoint-4xl: 160rem;
   --spacing-8xl: 160rem;
 }
 

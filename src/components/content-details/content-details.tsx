@@ -129,7 +129,7 @@ export const ContentDetails = ({
 
       {content.image_ids && (
         <div className="max-w-8xl relative z-10 mx-auto w-full flex-1 rounded-t-4xl bg-black/95 px-16 py-16 shadow-[0_-24px_24px_-8px_rgba(0,0,0,0.08)]">
-          <div className="3xl:grid-cols-3 grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className="4xl:grid-cols-3 grid grid-cols-1 gap-6 xl:grid-cols-2">
             {content.image_ids.map((imageId, index) => {
               const imageUrl = `${import.meta.env.VITE_BUNNY_CDN_URL}/${contentType}/${contentId}/${imageId}.webp`;
               const alt = `${content.name} thumbnail ${index + 1}`;
@@ -157,6 +157,54 @@ export const ContentDetails = ({
                         'opacity-0 transition group-hover:opacity-100'
                     )}
                   >
+                    <Button
+                      variant="destructive"
+                      onClick={async () => {
+                        try {
+                          const imagePath = `${contentType}/${contentId}/${imageId}.webp`;
+                          const { data: sessionData } =
+                            await supabase.auth.getSession();
+                          const response = await fetch(
+                            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bunny-delete`,
+                            {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${sessionData.session?.access_token}`,
+                              },
+                              body: JSON.stringify({ imagePath }),
+                            }
+                          );
+
+                          const result = await response.json();
+
+                          if (!result.success) {
+                            throw new Error(
+                              result.error || 'Failed to delete image from CDN'
+                            );
+                          }
+
+                          const { error } = await supabase
+                            .from(`${contentType}_images`)
+                            .delete()
+                            .eq('id', imageId);
+
+                          if (error) {
+                            throw new Error(error.message);
+                          }
+
+                          toast.success('Image deleted successfully');
+                          invalidateContentQueries(contentType, contentId);
+                        } catch (error) {
+                          toast.error(
+                            `Failed to delete image: ${(error as Error).message}`
+                          );
+                        }
+                      }}
+                      className="opacity-0 transition group-hover:opacity-100"
+                    >
+                      Delete
+                    </Button>
                     <Button
                       variant={
                         imageId === content.thumbnail_image_id

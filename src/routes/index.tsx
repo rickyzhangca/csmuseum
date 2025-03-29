@@ -21,7 +21,10 @@ function Index() {
   const getCities = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('cities_details').select('*');
+      const { data, error } = await supabase
+        .from('cities_details')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -31,7 +34,10 @@ function Index() {
   const getShots = useQuery({
     queryKey: ['shots'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('shots_details').select('*');
+      const { data, error } = await supabase
+        .from('shots_details')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -41,7 +47,10 @@ function Index() {
   const getAssets = useQuery({
     queryKey: ['assets'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('assets_details').select('*');
+      const { data, error } = await supabase
+        .from('assets_details')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -49,7 +58,7 @@ function Index() {
   });
 
   return (
-    <div className="max-w-8xl mx-auto flex flex-col gap-6 px-16 py-8">
+    <div className="max-w-8xl mx-auto flex flex-col gap-6 px-4 py-8 lg:px-8 xl:px-12 2xl:px-16">
       <h1>Discover</h1>
       <Tabs
         className="gap-6"
@@ -92,7 +101,7 @@ function Index() {
           </div>
         </Tabs.Panel>
         <Tabs.Panel value={contents[1]}>
-          <div className="grid w-full grid-cols-2 gap-4">
+          <div className="3xl:grid-cols-3 4xl:grid-cols-4 grid w-full gap-4 lg:grid-cols-2">
             {getShots.isLoading && <div>Loading shots...</div>}
             {getShots.isError && <div>Error loading shots</div>}
             {getShots.data?.map(shot => (
@@ -106,7 +115,7 @@ function Index() {
           </div>
         </Tabs.Panel>
         <Tabs.Panel value={contents[2]}>
-          <div className="grid w-full grid-cols-2 gap-4">
+          <div className="3xl:grid-cols-3 4xl:grid-cols-4 grid w-full gap-4 lg:grid-cols-2">
             {getAssets.isLoading && <div>Loading assets...</div>}
             {getAssets.isError && <div>Error loading assets</div>}
             {getAssets.data?.map(asset => (
@@ -121,7 +130,7 @@ function Index() {
         </Tabs.Panel>
       </Tabs>
       <footer>
-        <div className="max-w-8xl mx-auto flex flex-col items-center justify-center pt-20 pb-16">
+        <div className="max-w-8xl mx-auto flex flex-col items-center justify-center pt-12 pb-8 sm:pt-20 sm:pb-16">
           <p className="text-center text-gray-400">
             CSMuseum is proudly ad-free and open-source. All contents belong to
             their creators only.

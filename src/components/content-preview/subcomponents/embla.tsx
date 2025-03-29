@@ -109,13 +109,11 @@ const LazyLoadImage = ({
 
   return (
     <div
-      className="flex items-center justify-center"
+      className="flex items-center justify-center pl-3 lg:pl-5"
       style={{
         flex: `0 0 ${display === 'single' ? '100%' : 'auto'}`,
         minWidth: '0',
         maxWidth: display === 'single' ? '100%' : '90%',
-
-        paddingLeft: '20px',
       }}
     >
       <div
@@ -203,7 +201,7 @@ export const Embla = ({
   }, [emblaApi, updateSlidesInView]);
 
   return (
-    <section className="embla relative max-w-full">
+    <section className="embla relative flex h-full max-w-full items-center">
       <EmblaControl
         display={display}
         type="prev"

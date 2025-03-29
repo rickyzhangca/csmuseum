@@ -86,19 +86,19 @@ export type Database = {
           content_id: string
           created_at: string
           id: string
-          posted_by: string
+          posted_by_id: string
         }
         Insert: {
           content_id: string
           created_at?: string
           id: string
-          posted_by?: string
+          posted_by_id?: string
         }
         Update: {
           content_id?: string
           created_at?: string
           id?: string
-          posted_by?: string
+          posted_by_id?: string
         }
         Relationships: [
           {
@@ -194,19 +194,19 @@ export type Database = {
           content_id: string
           created_at: string
           id: string
-          posted_by: string
+          posted_by_id: string
         }
         Insert: {
           content_id: string
           created_at?: string
           id: string
-          posted_by?: string
+          posted_by_id?: string
         }
         Update: {
           content_id?: string
           created_at?: string
           id?: string
-          posted_by?: string
+          posted_by_id?: string
         }
         Relationships: [
           {
@@ -350,19 +350,19 @@ export type Database = {
           content_id: string
           created_at: string
           id: string
-          posted_by: string
+          posted_by_id: string
         }
         Insert: {
           content_id: string
           created_at?: string
           id: string
-          posted_by?: string
+          posted_by_id?: string
         }
         Update: {
           content_id?: string
           created_at?: string
           id?: string
-          posted_by?: string
+          posted_by_id?: string
         }
         Relationships: [
           {
